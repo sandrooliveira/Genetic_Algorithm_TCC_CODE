@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<p:commandButton value="Add" type="button" onclick="PF('addCostureira').show();" />
+
+	<p:dataTable var="costureira" value="#{costureirasController.costureiras}">
+		
+		<p:column headerText="Id">
+			<h:outputText value="#{costureira.idCostureira}" />
+		</p:column>
+
+		<p:column headerText="Nome">
+			<h:outputText value="#{costureira.nomeCostureira}" />
+		</p:column>
+
+	</p:dataTable>
+
+	<ui:include src="addCostureiraDialog.xhtml" />
+	
+</ui:composition>
