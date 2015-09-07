@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<ui:insert name="metadata" />
+
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=9" />
+			<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+		</f:facet>
+		
+		<link rel="stylesheet" type="text/css" 
+		href="#{facesContext.externalContext.requestContextPath}/css/default.css" media="screen" />	
+
+		<title>Fábrica de Calças</title>
+		<ui:insert name="head"></ui:insert>
+	</h:head>
+
+	<h:body>
+		<div class="header">
+			<ui:insert name="header" />
+		</div>
+
+		<div class="mainMenu">
+			<ui:insert name="mainMenu" />
+		</div>
+
+		<div class="main">
+
+			<div class="content">
+				<ui:insert name="content" />
+			</div>
+
+			<div class="clearer">
+				<ui:insert name="clearer" />
+			</div>
+
+		</div>
+
+		<div class="footer">
+			<ui:insert name="footer" />
+			<div class="clearer">
+				<ui:insert name="clearer" />
+			</div>
+		</div>
+	</h:body>
+</f:view>
+
+</html>
