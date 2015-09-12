@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<p:commandButton value="Adicionar" type="button" onclick="PF('addHabilidade').show();" />
+
+	<p:separator></p:separator>
+	
+	<p:dataTable var="habilidade" value="#{habilidadesController.habilidades}">
+		
+		<p:column headerText="Id">
+			<h:outputText value="#{habilidade.idHabilidade}" />
+		</p:column>
+
+		<p:column headerText="Nome">
+			<h:outputText value="#{habilidade.nomeHabilidade}" />
+		</p:column>
+		
+		<p:column headerText="Opções" id="opcoes">
+			<p:commandButton  id="withIcon" icon="ui-icon-pencil" />
+			<p:commandButton  id="withIco" icon="ui-icon-closethick" />	
+		</p:column>
+
+	</p:dataTable>
+
+	<ui:include src="addHabilidadesDialog.xhtml" />
+	
+</ui:composition>

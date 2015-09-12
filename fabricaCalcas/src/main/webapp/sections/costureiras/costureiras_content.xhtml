@@ -5,8 +5,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 	
-	<p:commandButton value="Add" type="button" onclick="PF('addCostureira').show();" />
+	<p:commandButton value="Adicionar" type="button" onclick="PF('addCostureira').show();" />
 
+	<p:separator></p:separator>
+	
 	<p:dataTable var="costureira" value="#{costureirasController.costureiras}">
 		
 		<p:column headerText="Id">
@@ -15,6 +17,11 @@
 
 		<p:column headerText="Nome">
 			<h:outputText value="#{costureira.nomeCostureira}" />
+		</p:column>
+		
+		<p:column headerText="Opções" id="opcoes">
+			<p:commandButton  id="withIcon" icon="ui-icon-pencil" />
+			<p:commandButton  id="withIco" icon="ui-icon-closethick" />	
 		</p:column>
 
 	</p:dataTable>

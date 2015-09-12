@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<p:commandButton value="Novo Processo" type="button" onclick="PF('addProcesso').show();" />
+
+	<p:separator></p:separator>
+	
+	<p:dataTable var="processo" value="#{processosController.processos}">
+		
+		<p:column headerText="Id Processo">
+			<h:outputText value="#{processo.idProcesso}" />
+		</p:column>
+
+		<p:column headerText="Cliente">
+			<h:outputText value="#{processo.nomeProcesso}" />
+		</p:column>
+		
+		<p:column headerText="Nome do modelo">
+			<h:outputText value="#{processo.nomeProcesso}" />
+		</p:column>
+		
+		<p:column headerText="Data entrega">
+			<h:outputText value="#{processo.nomeProcesso}" />
+		</p:column>
+		
+		<p:column headerText="Opções" id="opcoes">
+			<p:commandButton  id="withIcon" icon="ui-icon-pencil" />
+			<p:commandButton  id="withIco" icon="ui-icon-closethick" />	
+		</p:column>
+
+	</p:dataTable>
+
+	<ui:include src="addProcessosDialog.xhtml" />
+	
+</ui:composition>

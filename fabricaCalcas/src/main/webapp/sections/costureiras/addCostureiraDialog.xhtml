@@ -5,8 +5,22 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Basic Dialog" widgetVar="addCostureira" minHeight="40" modal="true">
-		<h:outputText value="Resistance to PrimeFaces is futile!" />
+	<p:dialog header="Cadastro Costureira" widgetVar="addCostureira" minHeight="40" modal="true">
+
+		<h:form>
+			<p:panel id="panel" header="Formulario de cadastro" style="margin-bottom:10px;">
+				<p:messages id="messages" />
+				<h:panelGrid columns="2" cellpadding="5">
+
+					<h:outputLabel for="name" value="Nome:" />
+					<p:inputText id="name" required="true" />
+
+				</h:panelGrid>
+			</p:panel>
+
+			<p:commandButton value="Adicionar" update="panel" />
+		</h:form>
+
 	</p:dialog>
 
 </ui:composition>
