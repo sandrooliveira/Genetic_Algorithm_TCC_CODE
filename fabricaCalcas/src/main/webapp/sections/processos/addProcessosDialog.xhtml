@@ -21,70 +21,101 @@
 				style="margin-bottom:10px;">
 				<p:messages id="messages" />  -->
 
-				<h:panelGrid columns="3" cellpadding="2">
-					<h:panelGrid columns="1" cellpadding="3">
+			<h:panelGrid columns="3" cellpadding="2">
+				<h:panelGrid columns="1" cellpadding="3">
 
-						<h:outputLabel for="cliente" value="Cliente:" />
-						<p:inputText id="cliente" required="true" />
+					<h:outputLabel for="cliente" value="Cliente:" />
+					<p:inputText id="cliente" 
+					             required="true"
+					             value="#{processosController.processo.cliente}"  />
 
-					</h:panelGrid>
-
-					<h:panelGrid columns="1" cellpadding="3">
-
-						<h:outputLabel for="modelo" value="Modelo:" />
-						<p:inputText id="modelo" required="true" />
-
-					</h:panelGrid>
-
-					<h:panelGrid columns="1" cellpadding="3">
-
-						<h:outputLabel for="entrega" value="Entrega:" />
-						<p:calendar id="entrega" required="true" />
-
-					</h:panelGrid>
 				</h:panelGrid>
 
-			<!--  </p:panel>  -->
-			
-			<h:outputText value="Atividades"/>
-			<p:separator></p:separator>
-			
-			<h:panelGrid columns="4" cellpadding="2">
-					
-					<h:panelGrid columns="1" cellpadding="3">
-						<h:outputLabel for="nomeAtividade" value="Nome da Atividade:" />
-						<p:inputText id="nomeAtividade" required="true" />
-					</h:panelGrid>
-					
-					<h:panelGrid columns="1" cellpadding="3" style="margin-top:25px;">
-						<h:outputLabel for="habilidade" value="Habilidade:" />
-						<p:selectOneListbox id="habilidade" value="#{selectOneView.option}" scrollHeight="50">
-            				<f:selectItem itemLabel="Option 1" itemValue="1" />
-            				<f:selectItem itemLabel="Option 2" itemValue="2" />
-            				<f:selectItem itemLabel="Option 3" itemValue="3" />
-            				<f:selectItem itemLabel="Option 1" itemValue="1" />
-            				<f:selectItem itemLabel="Option 2" itemValue="2" />
-            				<f:selectItem itemLabel="Option 3" itemValue="3" />
-            				
-        				</p:selectOneListbox>
-					</h:panelGrid>
-					
-					<h:panelGrid columns="1" cellpadding="3">
-						<h:outputLabel for="predecessora" value="Predecessora:" />
-						<p:inputText id="predecessora" required="true" />
-					</h:panelGrid>
-					
-					<h:panelGrid columns="1" cellpadding="3" style="margin-top:27px;">
-						<p:commandButton value="Adicionar Atividade"  />
-					</h:panelGrid>
-					
-					
+				<h:panelGrid columns="1" cellpadding="3">
+
+					<h:outputLabel for="modelo" value="Modelo:" />
+					<p:inputText id="modelo" 
+								 required="true"
+								 value="#{processosController.processo.nomeProcesso}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" cellpadding="3">
+
+					<h:outputLabel for="entrega" value="Entrega:" />
+					<p:calendar id="entrega" 
+								required="true" 
+								pattern="dd-MM-yyyy" 
+								mask="true" 
+								effect="fold"
+								value="#{processosController.processo.dataEntrega}"/>
+				</h:panelGrid>
 			</h:panelGrid>
-			
-			<h:outputText value="Fluxograma"/>
+
+			<!--  </p:panel>  -->
+
+			<h:outputText value="Atividades" />
+			<p:separator></p:separator>
+
+			<h:panelGrid columns="4" cellpadding="5">
+
+				<h:panelGrid columns="1" cellpadding="3">
+					<h:outputLabel for="nomeAtividade" value="Nome da Atividade:" />
+					<p:inputText id="nomeAtividade" required="true" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" cellpadding="3" style="margin-top:0px;">
+					<p:outputLabel for="console" value="Habilidade:" />
+					<p:selectOneMenu id="console" value="#{processosController.idHabilidade}"
+						style="width:180px">
+						<f:selectItems value="#{processosController.habilidades}" 
+									   var="hab"
+									   itemValue="#{hab.idHabilidade}"
+									   itemLabel="#{hab.nomeHabilidade}"/>
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" cellpadding="3" style="margin-top:27px;">
+					<p:commandButton value="Adicionar Atividade" 
+									 actionListener="#{processosController.addAtividade()}"
+									 ajax="true"/>
+				</h:panelGrid>
+
+
+			</h:panelGrid>
+
+			<h:outputText value="Fluxograma" />
 			<p:separator></p:separator>
 			
-			<p:commandButton value="Adicionar"  />
+			<h:panelGrid columns="3" cellpadding="2">
+
+				<h:panelGrid columns="1" cellpadding="3">
+					<p:outputLabel for="atividade" value="Atividade:" />
+					<p:selectOneMenu id="atividade" 
+						style="width:180px">
+						<f:selectItem itemLabel="hgcjhgcjyhtcjcjyfc" itemValue="" />
+						<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+						<f:selectItem itemLabel="PS4" itemValue="PS4" />
+						<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				
+				
+					<h:panelGrid columns="1" cellpadding="3">
+					<p:outputLabel for="atividadePredecessora" value="Atividade Predecessora:" />
+					<p:selectOneMenu id="atividadePredecessora" 
+						style="width:180px">
+						<f:selectItem itemLabel="hgcjhgcjyhtcjcjyfc" itemValue="" />
+						<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+						<f:selectItem itemLabel="PS4" itemValue="PS4" />
+						<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" cellpadding="3" style="margin-top:27px;">
+					<p:commandButton value="Add ao Fluxograma" />
+				</h:panelGrid>
+			</h:panelGrid>
 		</h:form>
 
 	</p:dialog>
