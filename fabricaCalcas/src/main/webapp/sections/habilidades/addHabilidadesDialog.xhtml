@@ -5,20 +5,42 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Cadastro de Habilidades" widgetVar="addHabilidade" minHeight="40" modal="true">
+	<p:dialog header="Adicionar Habilidades" widgetVar="addHabilidade"
+		minHeight="100" modal="true" showEffect="fade" hideEffect="fade">
 
 		<h:form>
-			<p:panel id="panel" header="Formulario de cadastro" style="margin-bottom:10px;">
-				<p:messages id="messages" />
-				<h:panelGrid columns="2" cellpadding="5">
+			<p:commandButton value="Salvar" />
+			<p:commandButton value="Cancelar" />
+		</h:form>
 
-					<h:outputLabel for="name" value="Nome:" />
-					<p:inputText id="name" required="true" />
+		
+		<p:separator></p:separator>
 
+		<h:form>
+			<!-- <p:panel id="panel" header="Formulario de cadastro"
+				style="margin-bottom:10px;">
+				<p:messages id="messages" />  -->
+
+				
+				<h:panelGrid columns="2" cellpadding="3">
+					<h:outputLabel for="atividade" value="Atividade:" />
+					<p:inputText id="atividade" required="true" />
 				</h:panelGrid>
-			</p:panel>
 
-			<p:commandButton value="Adicionar" update="panel" />
+				
+
+			<!--  </p:panel>  -->
+			
+			
+			
+			
+			
+			<h:outputText value="Tempo das costureiras em segundos"/>
+			<p:separator></p:separator>
+			
+		
+
+			
 		</h:form>
 
 	</p:dialog>

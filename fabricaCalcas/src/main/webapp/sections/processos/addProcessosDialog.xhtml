@@ -5,28 +5,86 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Adicionar Processos" widgetVar="addProcesso" minHeight="100" modal="true">
-	
+	<p:dialog header="Adicionar Processos" widgetVar="addProcesso"
+		minHeight="100" modal="true">
+
 		<h:form>
 			<p:commandButton value="Salvar" />
 			<p:commandButton value="Cancelar" />
 		</h:form>
-		
-		<h:outputLabel for="name" value="Dados" />
+
+		<h:outputText value="Dados" />
 		<p:separator></p:separator>
-		
+
 		<h:form>
-			<p:panel id="panel" header="Formulario de cadastro" style="margin-bottom:10px;">
-				<p:messages id="messages" />
-				<h:panelGrid columns="2" cellpadding="5">
+			<!-- <p:panel id="panel" header="Formulario de cadastro"
+				style="margin-bottom:10px;">
+				<p:messages id="messages" />  -->
 
-					<h:outputLabel for="name" value="Nome:" />
-					<p:inputText id="name" required="true" />
+				<h:panelGrid columns="3" cellpadding="2">
+					<h:panelGrid columns="1" cellpadding="3">
 
+						<h:outputLabel for="cliente" value="Cliente:" />
+						<p:inputText id="cliente" required="true" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" cellpadding="3">
+
+						<h:outputLabel for="modelo" value="Modelo:" />
+						<p:inputText id="modelo" required="true" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" cellpadding="3">
+
+						<h:outputLabel for="entrega" value="Entrega:" />
+						<p:calendar id="entrega" required="true" />
+
+					</h:panelGrid>
 				</h:panelGrid>
-			</p:panel>
 
-			<p:commandButton value="Adicionar" update="panel" />
+			<!--  </p:panel>  -->
+			
+			<h:outputText value="Atividades"/>
+			<p:separator></p:separator>
+			
+			<h:panelGrid columns="4" cellpadding="2">
+					
+					<h:panelGrid columns="1" cellpadding="3">
+						<h:outputLabel for="nomeAtividade" value="Nome da Atividade:" />
+						<p:inputText id="nomeAtividade" required="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1" cellpadding="3" style="margin-top:25px;">
+						<h:outputLabel for="habilidade" value="Habilidade:" />
+						<p:selectOneListbox id="habilidade" value="#{selectOneView.option}" scrollHeight="50">
+            				<f:selectItem itemLabel="Option 1" itemValue="1" />
+            				<f:selectItem itemLabel="Option 2" itemValue="2" />
+            				<f:selectItem itemLabel="Option 3" itemValue="3" />
+            				<f:selectItem itemLabel="Option 1" itemValue="1" />
+            				<f:selectItem itemLabel="Option 2" itemValue="2" />
+            				<f:selectItem itemLabel="Option 3" itemValue="3" />
+            				
+        				</p:selectOneListbox>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1" cellpadding="3">
+						<h:outputLabel for="predecessora" value="Predecessora:" />
+						<p:inputText id="predecessora" required="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1" cellpadding="3" style="margin-top:27px;">
+						<p:commandButton value="Adicionar Atividade"  />
+					</h:panelGrid>
+					
+					
+			</h:panelGrid>
+			
+			<h:outputText value="Fluxograma"/>
+			<p:separator></p:separator>
+			
+			<p:commandButton value="Adicionar"  />
 		</h:form>
 
 	</p:dialog>
