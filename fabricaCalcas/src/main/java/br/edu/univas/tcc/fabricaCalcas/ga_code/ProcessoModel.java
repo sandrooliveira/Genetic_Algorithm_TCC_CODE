@@ -56,7 +56,7 @@ public class ProcessoModel extends GAModel {
 
 		Query query = manager
 				.createQuery("select a from Atividade as a where a.processo.idProcesso = :idProcesso");
-		query.setParameter("idProcesso", 2);
+		query.setParameter("idProcesso", 3);
 
 		CostureirasDAO cdao = new CostureirasDAO(manager);
 
@@ -72,7 +72,7 @@ public class ProcessoModel extends GAModel {
 			costureirasHabilidades = cdao.getCostureirasByHabilidade(atividade
 					.getHabilidade().getIdHabilidade());
 			atividadesCostureiras.put(atividade.getIdAtividade(),costureirasHabilidades);
-			atividadeFinal = atividade.isAtividadeInicial() == 1 ? atividade: null;
+			if (atividade.isAtividadeInicial() == 1) atividadeFinal = atividade;
 		}
 	}
 

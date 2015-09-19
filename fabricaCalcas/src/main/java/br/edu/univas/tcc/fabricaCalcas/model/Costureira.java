@@ -30,6 +30,8 @@ public class Costureira implements java.io.Serializable {
 	private Integer idCostureira;
 	private String nomeCostureira;
 	private float disponibilidade;
+	private int positionX;
+	private int positionY;
 	private Set<CostureiraHabilidade> costureiraHabilidades = new HashSet<CostureiraHabilidade>(0);
 	
 	
@@ -73,6 +75,24 @@ public class Costureira implements java.io.Serializable {
 	@Column(name = "disponibilidade")
 	public float getDisponibilidade() {
 		return disponibilidade;
+	}
+	
+	@Column(name = "positionX")
+	public int getPositionX() {
+		return positionX;
+	}
+
+	public void setPositionX(int positionX) {
+		this.positionX = positionX;
+	}
+
+	@Column(name = "positionY")
+	public int getPositionY() {
+		return positionY;
+	}
+
+	public void setPositionY(int positionY) {
+		this.positionY = positionY;
 	}
 
 	public void setDisponibilidade(float disponibilidade) {

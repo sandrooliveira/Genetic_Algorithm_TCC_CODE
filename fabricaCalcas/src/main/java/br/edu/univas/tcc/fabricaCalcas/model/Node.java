@@ -74,7 +74,15 @@ public class Node {
 		long valor = 0;
 		long maior = 0;
 		for(Node node : predecesoras){
-			valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
+			/*Se a atividade anterior for Carimbo, então só é calculado a distância entre
+			 * a costureira e o Marcelo (Distribuidor de tarefas)*/
+			if(node.getAtividade().getHabilidade().getNomeHabilidade().equals("Carimbo")){
+				ProcessoChromosome processoChromosomeCarimbo = (ProcessoChromosome) node.getCromossomos().get(0);
+				valor = calcularTempoEntreCostureiras(processoChromosome, processoChromosomeCarimbo);
+			}else{
+				valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
+			}
+			
 			if(valor > maior){
 				maior = valor;
 			}
@@ -107,16 +115,47 @@ public class Node {
 	}
 	
 	public long calcularTempoEntreCostureiras(ProcessoChromosome processoChromosome,
-											  ProcessoChromosome proceChromosomeBefore){
-		int loteCostureira = (int) (Math.random() * 100);
-		//loteCostureira +=50;
-		return 0;
+											  ProcessoChromosome processoChromosomeBefore){
+		int posicaoCostureiraX = processoChromosome.getCostureiraHabilidade().getCostureira().getPositionX();
+		int posicaoCostureiraY = processoChromosome.getCostureiraHabilidade().getCostureira().getPositionY();
+		
+		int posicaoCostureiraBeforeX = processoChromosomeBefore.getCostureiraHabilidade().getCostureira().getPositionX();
+		int posicaoCostureiraBeforeY = processoChromosomeBefore.getCostureiraHabilidade().getCostureira().getPositionY();
+		
+		long distance = (long) Math.sqrt(
+				Math.pow(posicaoCostureiraX - posicaoCostureiraBeforeX, 2)+
+				Math.pow(posicaoCostureiraY - posicaoCostureiraBeforeY, 2));
+		
+		/*System.out.println("Distancia entre a " + processoChromosome.getCostureiraHabilidade().getCostureira().getNomeCostureira());
+		System.out.println("e a " +processoChromosomeBefore.getCostureiraHabilidade().getCostureira().getNomeCostureira());
+		System.out.println(">>> "+distance);*/
+		
+		return distance * 100;
 	}
 	
 	public List<Node> getPredecesoras() {
 		return predecesoras;
+		
 	}
+	
 	public void setPredecesoras(List<Node> predecesoras) {
 		this.predecesoras = predecesoras;
 	}
+
+	public Atividade getAtividade() {
+		return atividade;
+	}
+
+	public void setAtividade(Atividade atividade) {
+		this.atividade = atividade;
+	}
+
+	public List<Chromosome> getCromossomos() {
+		return cromossomos;
+	}
+
+	public void setCromossomos(List<Chromosome> cromossomos) {
+		this.cromossomos = cromossomos;
+	}
+	
 }
