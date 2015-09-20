@@ -7,6 +7,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -78,7 +79,7 @@ public class Atividade implements java.io.Serializable {
 		this.atividadeInicial = atividadeInicial;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "atividadeByIdAtividade")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "atividadeByIdAtividade")
 	public Set<AtividadeOrdem> getAtividadeOrdemsForIdAtividade() {
 		return this.atividadeOrdemsForIdAtividade;
 	}
@@ -88,7 +89,7 @@ public class Atividade implements java.io.Serializable {
 		this.atividadeOrdemsForIdAtividade = atividadeOrdemsForIdAtividade;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "atividadePredecessora")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL ,mappedBy = "atividadePredecessora")
 	public Set<AtividadeOrdem> getAtividadesPredecessoras() {
 		return this.atividadesPredecessoras;
 	}

@@ -22,5 +22,12 @@ public class HabilidadeDAO {
 		return q.getResultList();
 	}
 	
+	public Habilidade selectHabilidadeById(int idHabilidade){
+		String query = "Select h from Habilidade h where h.idHabilidade = :idHabilidade";
+		TypedQuery<Habilidade> q = manager.createQuery(query,Habilidade.class);
+		q.setParameter("idHabilidade", idHabilidade);
+		return q.getSingleResult();
+	}
+	
 
 }

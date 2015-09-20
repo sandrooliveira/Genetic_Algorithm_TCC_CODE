@@ -3,7 +3,7 @@
 	<persistence-unit name="db_pu" transaction-type="RESOURCE_LOCAL">
 	<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<properties>
-			<property name="hibernate.show_sql" value="false"/>
+			<property name="hibernate.show_sql" value="true"/>
 			<property name="hibernate.generate_dll" value="true"/>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
 			

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formEditProcesso">
+		<p:dialog header="Editar processo" widgetVar="editProcesso"
+			id="modalEditProcesso" minHeight="100" modal="true">
+
+			<p:messages autoUpdate="true" />
+			<h:panelGrid columns="2">
+
+				<h:outputLabel for="cliente" value="Cliente:" />
+				<p:inputText id="editCliente" required="true"
+					value="#{processosController.processoToEdit.cliente}"
+					requiredMessage="Por favor informe um cliente"
+					maxlength="19" />
+
+				<h:outputLabel for="modelo" value="Modelo:" />
+				<p:inputText id="editModelo" required="true"
+					value="#{processosController.processoToEdit.nomeProcesso}"
+					requiredMessage="Por favor informe um modelo"
+					maxlength="19" />
+
+
+				<h:outputLabel for="entrega" value="Entrega:" />
+				<p:calendar id="editEntrega" required="true" mask="true"
+					effect="fold"
+					value="#{processosController.processoToEdit.dataEntrega}"
+					requiredMessage="Por favor informe uma data de entrega" />
+			</h:panelGrid>
+
+			<p:separator />
+
+			<h:panelGrid columns="2" style="margin-left:50px">
+				<p:commandButton value="Salvar"
+					action="#{processosController.updateProcesso()}"
+					update=":formProcessos:tabelaProcessos" />
+
+				<p:commandButton value="Cancelar"
+					onclick="PF('editProcesso').hide()" immediate="true" />
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+</ui:composition>

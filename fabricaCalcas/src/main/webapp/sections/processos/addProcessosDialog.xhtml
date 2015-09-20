@@ -5,119 +5,43 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Adicionar Processos" widgetVar="addProcesso"
-		minHeight="100" modal="true">
+	<h:form id="formAddProcesso">
+		<p:dialog header="Adicionar Processo" widgetVar="addProcesso"
+			id="modalAddProcesso" minHeight="100" modal="true">
 
-		<h:form>
-			<p:commandButton value="Salvar" />
-			<p:commandButton value="Cancelar" />
-		</h:form>
+			<p:messages autoUpdate="true" />
+			<h:panelGrid columns="2">
 
-		<h:outputText value="Dados" />
-		<p:separator></p:separator>
+				<h:outputLabel for="cliente" value="Cliente:" />
+				<p:inputText id="cliente" required="true"
+					value="#{processosController.processo.cliente}"
+					requiredMessage="Por favor informe um cliente" 
+					maxlength="19"/>
 
-		<h:form>
-			<!-- <p:panel id="panel" header="Formulario de cadastro"
-				style="margin-bottom:10px;">
-				<p:messages id="messages" />  -->
+				<h:outputLabel for="modelo" value="Modelo:" />
+				<p:inputText id="modelo" required="true"
+					value="#{processosController.processo.nomeProcesso}"
+					requiredMessage="Por favor informe um modelo" 
+					maxlength="19"/>
 
-			<h:panelGrid columns="3" cellpadding="2">
-				<h:panelGrid columns="1" cellpadding="3">
 
-					<h:outputLabel for="cliente" value="Cliente:" />
-					<p:inputText id="cliente" 
-					             required="true"
-					             value="#{processosController.processo.cliente}"  />
-
-				</h:panelGrid>
-
-				<h:panelGrid columns="1" cellpadding="3">
-
-					<h:outputLabel for="modelo" value="Modelo:" />
-					<p:inputText id="modelo" 
-								 required="true"
-								 value="#{processosController.processo.nomeProcesso}" />
-
-				</h:panelGrid>
-
-				<h:panelGrid columns="1" cellpadding="3">
-
-					<h:outputLabel for="entrega" value="Entrega:" />
-					<p:calendar id="entrega" 
-								required="true" 
-								pattern="dd-MM-yyyy" 
-								mask="true" 
-								effect="fold"
-								value="#{processosController.processo.dataEntrega}"/>
-				</h:panelGrid>
+				<h:outputLabel for="entrega" value="Entrega:" />
+				<p:calendar id="entrega" required="true" mask="true" effect="fold"
+					value="#{processosController.processo.dataEntrega}"
+					requiredMessage="Por favor informe uma data de entrega" />
 			</h:panelGrid>
 
-			<!--  </p:panel>  -->
+			<p:separator />
 
-			<h:outputText value="Atividades" />
-			<p:separator></p:separator>
-
-			<h:panelGrid columns="4" cellpadding="5">
-
-				<h:panelGrid columns="1" cellpadding="3">
-					<h:outputLabel for="nomeAtividade" value="Nome da Atividade:" />
-					<p:inputText id="nomeAtividade" required="true" />
-				</h:panelGrid>
-
-				<h:panelGrid columns="1" cellpadding="3" style="margin-top:0px;">
-					<p:outputLabel for="console" value="Habilidade:" />
-					<p:selectOneMenu id="console" value="#{processosController.idHabilidade}"
-						style="width:180px">
-						<f:selectItems value="#{processosController.habilidades}" 
-									   var="hab"
-									   itemValue="#{hab.idHabilidade}"
-									   itemLabel="#{hab.nomeHabilidade}"/>
-					</p:selectOneMenu>
-				</h:panelGrid>
-
-				<h:panelGrid columns="1" cellpadding="3" style="margin-top:27px;">
-					<p:commandButton value="Adicionar Atividade" 
-									 actionListener="#{processosController.addAtividade()}"
-									 ajax="true"/>
-				</h:panelGrid>
-
-
-			</h:panelGrid>
-
-			<h:outputText value="Fluxograma" />
-			<p:separator></p:separator>
+			<h:panelGrid columns="2" style="margin-left:50px">
+				<p:commandButton value="Salvar"
+								 actionListener="#{processosController.addProcesso()}"
+								 update="formProcessos:tabelaProcessos"/>
 			
-			<h:panelGrid columns="3" cellpadding="2">
-
-				<h:panelGrid columns="1" cellpadding="3">
-					<p:outputLabel for="atividade" value="Atividade:" />
-					<p:selectOneMenu id="atividade" 
-						style="width:180px">
-						<f:selectItem itemLabel="hgcjhgcjyhtcjcjyfc" itemValue="" />
-						<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-						<f:selectItem itemLabel="PS4" itemValue="PS4" />
-						<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
-					</p:selectOneMenu>
-				</h:panelGrid>
-				
-				
-					<h:panelGrid columns="1" cellpadding="3">
-					<p:outputLabel for="atividadePredecessora" value="Atividade Predecessora:" />
-					<p:selectOneMenu id="atividadePredecessora" 
-						style="width:180px">
-						<f:selectItem itemLabel="hgcjhgcjyhtcjcjyfc" itemValue="" />
-						<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-						<f:selectItem itemLabel="PS4" itemValue="PS4" />
-						<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
-					</p:selectOneMenu>
-				</h:panelGrid>
-
-				<h:panelGrid columns="1" cellpadding="3" style="margin-top:27px;">
-					<p:commandButton value="Add ao Fluxograma" />
-				</h:panelGrid>
+				<p:commandButton value="Cancelar" 
+								 onclick="PF('addProcesso').hide()"
+							     immediate="true" />
 			</h:panelGrid>
-		</h:form>
-
-	</p:dialog>
-
+		</p:dialog>
+	</h:form>
 </ui:composition>

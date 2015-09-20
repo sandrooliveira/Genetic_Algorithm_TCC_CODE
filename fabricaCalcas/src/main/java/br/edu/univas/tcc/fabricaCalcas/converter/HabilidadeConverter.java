@@ -4,7 +4,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.servlet.ServletContext;
 
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 
 import br.edu.univas.tcc.fabricaCalcas.model.Habilidade;
@@ -30,11 +32,12 @@ public class HabilidadeConverter implements Converter {
 		if (value == null || value.equals("")) {
 			return "";
 		} else {
-			FacesContextUtils
-					.getWebApplicationContext(FacesContext.getCurrentInstance())
-					.getServletContext()
-					.setAttribute(((Habilidade) value).toString(),
-							((Habilidade) value));
+			
+			
+		WebApplicationContext teste = FacesContextUtils
+					.getWebApplicationContext(FacesContext.getCurrentInstance());
+					/*.setAttribute(((Habilidade) value).toString(),
+							((Habilidade) value));*/
 			return ((Habilidade) value).toString();
 
 		}

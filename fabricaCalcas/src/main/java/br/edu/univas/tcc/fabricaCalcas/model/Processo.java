@@ -4,10 +4,13 @@ package br.edu.univas.tcc.fabricaCalcas.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +26,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "processo", catalog = "mydb")
-public class Processo implements java.io.Serializable {
+public class Processo implements java.io.Serializable, Comparator<Processo> {
 
 	/**
 	 * 
@@ -36,6 +39,16 @@ public class Processo implements java.io.Serializable {
 	private Set<Atividade> atividades = new HashSet<Atividade>(0);
 
 
+	
+	public String pegarDataFormatada(){
+		if(dataEntrega != null){
+			SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
+			return sd.format(dataEntrega);
+		}
+		return null;
+	}
+	
+	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id_processo", unique = true, nullable = false)
@@ -56,7 +69,7 @@ public class Processo implements java.io.Serializable {
 		this.nomeProcesso = nomeProcesso;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "processo")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "processo")
 	public Set<Atividade> getAtividades() {
 		return this.atividades;
 	}
@@ -82,6 +95,17 @@ public class Processo implements java.io.Serializable {
 
 	public void setDataEntrega(Date dataEntrega) {
 		this.dataEntrega = dataEntrega;
+	}
+
+
+	public int compare(Processo o1, Processo o2) {
+		if(o1.getIdProcesso() > o2.getIdProcesso()){
+			return -1;
+		}else if(o1.getIdProcesso() < o2.getIdProcesso()){
+			return 1;
+		}else{
+			return 0;
+		}
 	}
 	
 	
