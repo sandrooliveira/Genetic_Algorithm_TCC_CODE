@@ -32,13 +32,20 @@ public class Atividade implements java.io.Serializable {
 	private Integer idAtividade;
 	private Processo processo;
 	private Habilidade habilidade;
-	private int atividadeInicial;
+	private String nomeAtividade;
+	private boolean atividadeFinal;
 	private Set<AtividadeOrdem> atividadeOrdemsForIdAtividade = new HashSet<AtividadeOrdem>(0);
 	private Set<AtividadeOrdem> atividadesPredecessoras = new HashSet<AtividadeOrdem>(0);
 
 	public Atividade() {
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return habilidade.getNomeHabilidade();
+	}
+	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id_atividade", unique = true, nullable = false)
@@ -70,20 +77,31 @@ public class Atividade implements java.io.Serializable {
 		this.habilidade = habilidade;
 	}
 	
-	@Column(name="is_atividade_inicial",nullable=false)
-	public int isAtividadeInicial() {
-		return atividadeInicial;
+	@Column(name="nome_atividade", nullable = false)
+	public String getNomeAtividade() {
+		return nomeAtividade;
 	}
 
-	public void setAtividadeInicial(int atividadeInicial) {
-		this.atividadeInicial = atividadeInicial;
+	public void setNomeAtividade(String nomeAtividade) {
+		this.nomeAtividade = nomeAtividade;
 	}
+
+	@Column(name="is_atividade_final",nullable=false)
+	public boolean isAtividadeFinal() {
+		return atividadeFinal;
+	}
+
+	public void setAtividadeFinal(boolean atividadeFinal) {
+		this.atividadeFinal = atividadeFinal;
+	}
+
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "atividadeByIdAtividade")
 	public Set<AtividadeOrdem> getAtividadeOrdemsForIdAtividade() {
 		return this.atividadeOrdemsForIdAtividade;
 	}
 
+	
 	public void setAtividadeOrdemsForIdAtividade(
 			Set<AtividadeOrdem> atividadeOrdemsForIdAtividade) {
 		this.atividadeOrdemsForIdAtividade = atividadeOrdemsForIdAtividade;
@@ -97,5 +115,5 @@ public class Atividade implements java.io.Serializable {
 	public void setAtividadesPredecessoras(Set<AtividadeOrdem> atividadesPredecessoras) {
 		this.atividadesPredecessoras = atividadesPredecessoras;
 	}
-
+	
 }

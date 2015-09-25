@@ -1,5 +1,6 @@
 package br.edu.univas.tcc.fabricaCalcas.controller;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,14 +53,6 @@ public class ProcessosController {
 
 	}
 
-	public void addAtividade() {
-		Habilidade habilidade = habDao.selectHabilidadeById(idHabilidade);
-		Atividade atividade = new Atividade();
-		atividade.setHabilidade(habilidade);
-		atividade.setProcesso(processo);
-		atDao.addNovaAtividade(atividade);
-	}
-
 	public void addProcesso() {
 
 		if (processo.getCliente() != null) {
@@ -108,12 +101,14 @@ public class ProcessosController {
 		request.execute("PF('editProcesso').hide()");
 	}
 	
-	public String abrirProcesso(int idProcesso){
+	public String abrirProcesso(int idProcesso) throws IOException{
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("/pages/abrirProcesso?faces-redirect=true");
 		stringBuffer.append("&amp;idProcesso=").append(idProcesso);
 
-		return stringBuffer.toString();
+		FacesContext.getCurrentInstance().getExternalContext().redirect("abrirProcesso.jsf?idProcesso="+idProcesso); 
+		
+		return null;
 	}
 
 	public List<Atividade> getAtividades() {

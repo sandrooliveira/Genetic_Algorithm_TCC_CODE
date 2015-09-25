@@ -24,3 +24,16 @@ form{
 	margin-top: 50px!important;
 }
 
+.titulos{
+	font-size: 25px;
+	color: #8852;
+}
+
+.panelGridEscolherAtividadesOrder{
+	margin-bottom:10px;
+	border: none!important;
+}
+
+#selectAtividadeToOrder{
+	margin-left:110px!important;
+}

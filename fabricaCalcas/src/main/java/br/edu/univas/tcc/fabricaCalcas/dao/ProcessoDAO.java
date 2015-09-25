@@ -27,6 +27,13 @@ public class ProcessoDAO {
 		return query.getResultList();
 	}
 	
+	public Processo getProcessoByID(int idProcesso){
+		String query = "SELECT p from Processo p where p.idProcesso = :idProcesso";
+		TypedQuery<Processo> q = manager.createQuery(query,Processo.class);
+		q.setParameter("idProcesso", idProcesso);
+		return q.getSingleResult();
+	}
+	
 	public void updateProcesso(Processo processo){
 		manager.getTransaction().begin();
 		manager.merge(processo);

@@ -5,50 +5,82 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<h:form id="formProcessos">
-		<p:commandButton value="Novo Processo" immediate="true"
-			onclick="PF('addProcesso').show();" />
+	<h:form id="formAtividadesProcessos">
+		<p:commandButton value="Nova Atividade" immediate="true"
+			onclick="PF('addAtividade').show();" />
 
 		<p:messages autoUpdate="true" />
 
 		<p:separator></p:separator>
 
-		<p:dataTable var="processo" value="#{processosController.processos}"
-			id="tabelaProcessos" style="text-align:center;" paginator="true"
+		<p:dataTable var="atividade"
+			value="#{processosAtividadesController.atividades}"
+			id="tabelaAtividades" style="text-align:center;" paginator="true"
 			rows="8" paginatorPosition="bottom">
 
-			<p:column headerText="Cliente">
-				<h:outputText value="#{processo.cliente}" />
+			<p:column headerText="Atividade">
+				<h:outputText value="#{atividade.nomeAtividade}" />
 			</p:column>
 
-			<p:column headerText="Nome do modelo">
-				<h:outputText value="#{processo.nomeProcesso}" />
+			<p:column headerText="Habilidade">
+				<h:outputText value="#{atividade.habilidade.nomeHabilidade}" />
 			</p:column>
 
-			<p:column headerText="Data entrega">
-				<h:outputText value="#{processo.pegarDataFormatada()}" />
+			<p:column headerText="Atividade Final">
+				<h:outputText value="#{atividade.atividadeFinal}" />
 			</p:column>
 
 			<p:column headerText="Opções" id="opcoes">
 				<p:commandButton id="buttonPencil" icon="ui-icon-pencil"
-					actionListener="#{processosController.loadProcessoToEdit(processo)}"
-					update="formEditProcesso:modalEditProcesso"
-					oncomplete="PF('editProcesso').show()">
+					actionListener="#{processosAtividadesController.loadAtividadeToEdit(atividade)}"
+					update="formEditAtividade:modalEditAtividade"
+					oncomplete="PF('editAtividade').show()">
 				</p:commandButton>
 
 				<p:commandButton id="buttonExcluir" icon="ui-icon-trash"
-					actionListener="#{processosController.loadProcessoToDelete(processo)}" 
-					oncomplete="PF('modalExluirProcesso').show()"
-					update="formProcessos:tabelaProcessos"/>
-				
-				<p:commandButton id="buttonOpen" icon="ui-icon-folder-open" />
+					actionListener="#{processosAtividadesController.loadAtividadeToDelete(atividade)}"
+					oncomplete="PF('modalExluirProcesso').show()" />
 			</p:column>
 
 		</p:dataTable>
-		
+
+		<p:separator></p:separator>
+		<h:outputLabel value="Fluxograma" styleClass="titulos"></h:outputLabel>
+		<p:separator></p:separator>
+
+		<div id="selectAtividadeToOrder">
+			<p:panelGrid columns="8"
+				styleClass="panelGridEscolherAtividadesOrder">
+				<p:outputLabel for="console" value="Atividade:" />
+				<p:selectOneMenu id="console" style="width:125px" value="#{processosAtividadesController.atividades}">
+					<f:selectItems></f:selectItems>
+				</p:selectOneMenu>
+
+				<p:outputLabel for="consoles" value="Atividade predecessora:" />
+				<p:selectOneMenu id="consoles" style="width:125px">
+					<f:selectItem itemLabel="Select One" itemValue="" />
+					<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+					<f:selectItem itemLabel="PS4" itemValue="PS4" />
+					<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+				</p:selectOneMenu>
+
+				<p:commandButton value="Adicionar"></p:commandButton>
+			</p:panelGrid>
+		</div>
+
+		<h:form>
+			<h3>Fluxo do processo</h3>
+			<p:tree value="#{processosAtividadesController.root}" var="node" dynamic="true"
+				orientation="horizontal">
+				<p:treeNode>
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+		</h:form>
+
 	</h:form>
-	<ui:include src="addProcessosDialog.xhtml" />
-	<ui:include src="editProcessosDialog.xhtml" />
-	<ui:include src="confirmExcluirDialog.xhtml" />
+	
+	<ui:include src="addAtividadeDialog.xhtml" />
+	<ui:include src="editAtividadeDialog.xhtml" />
 
 </ui:composition>

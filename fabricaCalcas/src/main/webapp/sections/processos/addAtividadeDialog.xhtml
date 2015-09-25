@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formAddAtividade">
+		<p:dialog header="Adicionar Processo" widgetVar="addAtividade"
+			id="modalAddAtividade" minHeight="100" modal="true">
+
+			<p:messages autoUpdate="true" />
+			<h:panelGrid columns="2">
+
+				<h:outputLabel for="atividade" value="Atividade:" />
+				<p:inputText id="atividade" required="true"
+					value="#{processosAtividadesController.atividade.nomeAtividade}"
+					requiredMessage="Por favor informe a atividade" 
+					maxlength="19"/>
+
+				<h:outputLabel for="habilidade" value="Habilidade:" />
+				<p:selectOneMenu value="#{processosAtividadesController.atividade.habilidade}"
+								 id="selectAtividade" converter="habilidadeConverter">
+								 
+						<f:selectItems value="#{processosAtividadesController.habilidades}"
+									   var="hab" itemValue="#{hab}" itemLabel="#{hab.nomeHabilidade}" />
+				
+				</p:selectOneMenu>
+
+
+				<h:outputLabel for="atividadeInicial" value="Atividade inicial?" />
+				<p:selectBooleanCheckbox value="#{processosAtividadesController.atividade.atividadeFinal}" />
+			</h:panelGrid>
+
+			<p:separator />
+
+			<h:panelGrid columns="2" style="margin-left:50px">
+				<p:commandButton value="Salvar"
+								 actionListener="#{processosAtividadesController.addAtividade()}"
+								 update="formAtividadesProcessos:tabelaAtividades,formAddAtividade"
+								 oncomplete="PF('addAtividade').hide()"/>
+			
+				<p:commandButton value="Cancelar" 
+								 onclick="PF('addAtividade').hide()"
+							     immediate="true" />
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+</ui:composition>

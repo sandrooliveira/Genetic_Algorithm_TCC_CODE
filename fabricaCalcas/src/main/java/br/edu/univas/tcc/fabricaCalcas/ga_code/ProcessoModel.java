@@ -72,7 +72,7 @@ public class ProcessoModel extends GAModel {
 			costureirasHabilidades = cdao.getCostureirasByHabilidade(atividade
 					.getHabilidade().getIdHabilidade());
 			atividadesCostureiras.put(atividade.getIdAtividade(),costureirasHabilidades);
-			if (atividade.isAtividadeInicial() == 1) atividadeFinal = atividade;
+			if (atividade.isAtividadeFinal()) atividadeFinal = atividade;
 		}
 	}
 

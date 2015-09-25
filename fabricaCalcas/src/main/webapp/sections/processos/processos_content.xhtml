@@ -41,7 +41,9 @@
 					oncomplete="PF('modalExluirProcesso').show()"
 					update="formProcessos:tabelaProcessos"/>
 				
-				<p:commandButton id="buttonOpen" icon="ui-icon-folder-open" />
+				<p:commandButton id="buttonOpen" icon="ui-icon-folder-open" 
+					actionListener="#{processosController.abrirProcesso(processo.idProcesso)}"
+					ajax="false"/>
 			</p:column>
 
 		</p:dataTable>

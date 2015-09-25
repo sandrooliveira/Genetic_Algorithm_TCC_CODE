@@ -31,6 +31,7 @@ public class Habilidade implements java.io.Serializable {
 	private Set<CostureiraHabilidade> costureiraHabilidades = new HashSet<CostureiraHabilidade>(0);
 	private Set<Atividade> atividades = new HashSet<Atividade>(0);
 
+	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id_habilidade", unique = true, nullable = false)

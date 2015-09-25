@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formEditAtividade">
+		<p:dialog header="Editar Atividade" widgetVar="editAtividade"
+			id="modalEditAtividade" minHeight="100" modal="true">
+
+			<p:messages autoUpdate="true" />
+			<h:panelGrid columns="2">
+
+				<h:outputLabel for="editAtividade" value="Atividade:" />
+				<p:inputText id="editAtividade" required="true"
+					value="#{processosAtividadesController.atividadeToEdit.nomeAtividade}"
+					requiredMessage="Por favor informe a atividade" maxlength="19" />
+
+				<h:outputLabel for="editHabilidade" value="Habilidade:" />
+				<p:selectOneMenu
+					value="#{processosAtividadesController.atividadeToEdit.habilidade}"
+					id="selectEditAtividade">
+					<f:converter converterId="habilidadeConverter"></f:converter>
+					<f:selectItems value="#{processosAtividadesController.habilidades}"
+						var="hab" itemValue="#{hab}"
+						itemLabel="#{hab.nomeHabilidade}" />
+
+				</p:selectOneMenu>
+
+
+				<h:outputLabel for="editAtividadeInicial" value="Atividade inicial?" />
+				<p:selectBooleanCheckbox
+					value="#{processosAtividadesController.atividadeToEdit.atividadeFinal}" />
+			</h:panelGrid>
+
+			<p:separator />
+
+			<h:panelGrid columns="2" style="margin-left:50px">
+				<p:commandButton value="Salvar"
+					actionListener="#{processosAtividadesController.updateAtividade()}"
+					update="formAtividadesProcessos:tabelaAtividades" />
+					
+
+				<p:commandButton value="Cancelar"
+					onclick="PF('editAtividade').hide()" immediate="true" />
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+</ui:composition>
