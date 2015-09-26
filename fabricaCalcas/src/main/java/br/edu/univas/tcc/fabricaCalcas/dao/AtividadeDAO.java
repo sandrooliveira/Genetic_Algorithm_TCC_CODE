@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import br.edu.univas.tcc.fabricaCalcas.model.Atividade;
+import br.edu.univas.tcc.fabricaCalcas.model.AtividadeOrdem;
 
 public class AtividadeDAO {
 
@@ -17,13 +18,7 @@ public class AtividadeDAO {
 	
 	public void addNovaAtividade(Atividade atividade){
 		manager.getTransaction().begin();
-		
-		if(atividade.getProcesso().getIdProcesso() == null ||
-				atividade.getProcesso().getIdProcesso() == 0){
-			manager.persist(atividade.getProcesso());
-		}
 		manager.persist(atividade);
-		
 		manager.getTransaction().commit();
 	}
 	
@@ -37,6 +32,18 @@ public class AtividadeDAO {
 	public void updateAtividade(Atividade atividade){
 		manager.getTransaction().begin();
 		manager.merge(atividade);
+		manager.getTransaction().commit();
+	}
+	
+	public void addAtividadeOrdem(AtividadeOrdem atividadeOrdem){
+		manager.getTransaction().begin();
+		manager.persist(atividadeOrdem);
+		manager.getTransaction().commit();
+	}
+	
+	public void removeAtividadeOrdem(AtividadeOrdem atividadeOrdem){
+		manager.getTransaction().begin();
+		manager.remove(atividadeOrdem);
 		manager.getTransaction().commit();
 	}
 }

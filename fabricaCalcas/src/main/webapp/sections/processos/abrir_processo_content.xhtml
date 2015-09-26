@@ -7,9 +7,10 @@
 
 	<h:form id="formAtividadesProcessos">
 		<p:commandButton value="Nova Atividade" immediate="true"
-			onclick="PF('addAtividade').show();" />
+			action="#{processosAtividadesController.checkNovAtividade()}"
+			update="formAddAtividade,formEditAtividade" />
 
-		<p:messages autoUpdate="true" />
+		<p:messages id="message" autoUpdate="true" />
 
 		<p:separator></p:separator>
 
@@ -24,10 +25,6 @@
 
 			<p:column headerText="Habilidade">
 				<h:outputText value="#{atividade.habilidade.nomeHabilidade}" />
-			</p:column>
-
-			<p:column headerText="Atividade Final">
-				<h:outputText value="#{atividade.atividadeFinal}" />
 			</p:column>
 
 			<p:column headerText="Opções" id="opcoes">
@@ -47,40 +44,47 @@
 		<p:separator></p:separator>
 		<h:outputLabel value="Fluxograma" styleClass="titulos"></h:outputLabel>
 		<p:separator></p:separator>
+		
+		<p:messages autoUpdate="true" />
 
 		<div id="selectAtividadeToOrder">
 			<p:panelGrid columns="8"
-				styleClass="panelGridEscolherAtividadesOrder">
-				<p:outputLabel for="console" value="Atividade:" />
-				<p:selectOneMenu id="console" style="width:125px" value="#{processosAtividadesController.atividades}">
-					<f:selectItems></f:selectItems>
+						 styleClass="panelGridEscolherAtividadesOrder">
+						 
+				<p:outputLabel for="atividadeChose" value="Atividade:" />
+				<p:selectOneMenu id="atividadeChose" style="width:140px" 
+								 value="#{processosAtividadesController.atividadeToAddOnFluxograma}"
+								 converter="atividadeConverter">
+					
+					<f:selectItems value="#{processosAtividadesController.atividadesCombobox}"
+								   var="atividadeToChose" itemValue="#{atividadeToChose}"
+								   itemLabel="#{atividadeToChose.nomeAtividade}" />
 				</p:selectOneMenu>
 
-				<p:outputLabel for="consoles" value="Atividade predecessora:" />
-				<p:selectOneMenu id="consoles" style="width:125px">
-					<f:selectItem itemLabel="Select One" itemValue="" />
-					<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-					<f:selectItem itemLabel="PS4" itemValue="PS4" />
-					<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+				<p:outputLabel for="predecessora" value="Atividade Predecessora:" />
+				<p:selectOneMenu id="predecessora" style="width:140px"
+								 value="#{processosAtividadesController.atividadePredecessora}"
+								 converter="atividadeConverter">
+					
+					<f:selectItems value="#{processosAtividadesController.atividadesComboboxPredecessora}"
+								   var="atividadeToChose" itemValue="#{atividadeToChose}"
+								   itemLabel="#{atividadeToChose.nomeAtividade}" />
 				</p:selectOneMenu>
 
-				<p:commandButton value="Adicionar"></p:commandButton>
+				<p:commandButton value="Adicionar" ajax="true" action="#{processosAtividadesController.addPredecessora()}"
+								 update="arvore,atividadeChose,predecessora,message"/>
 			</p:panelGrid>
 		</div>
 
-		<h:form>
-			<h3>Fluxo do processo</h3>
-			<p:tree value="#{processosAtividadesController.root}" var="node" dynamic="true"
-				orientation="horizontal">
-				<p:treeNode>
-					<h:outputText value="#{node}" />
-				</p:treeNode>
-			</p:tree>
-		</h:form>
-
+		<h3>Fluxo do processo</h3>
+		<p:tree value="#{processosAtividadesController.root}" var="node"
+		   	    dynamic="true" orientation="horizontal" id="arvore">
+			<p:treeNode>
+				<h:outputText value="#{node}" />
+			</p:treeNode>
+		</p:tree>
 	</h:form>
 	
 	<ui:include src="addAtividadeDialog.xhtml" />
 	<ui:include src="editAtividadeDialog.xhtml" />
-
 </ui:composition>

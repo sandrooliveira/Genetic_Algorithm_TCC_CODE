@@ -29,13 +29,34 @@ public class Atividade implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "id_atividade", unique = true, nullable = false)
 	private Integer idAtividade;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_processo", nullable = false)
 	private Processo processo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_hablidade", nullable = false)
 	private Habilidade habilidade;
+	
+	@Column(name="nome_atividade", nullable = false)
 	private String nomeAtividade;
+	
+	@Column(name="is_atividade_final",nullable=false)
 	private boolean atividadeFinal;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "atividade")
 	private Set<AtividadeOrdem> atividadeOrdemsForIdAtividade = new HashSet<AtividadeOrdem>(0);
-	private Set<AtividadeOrdem> atividadesPredecessoras = new HashSet<AtividadeOrdem>(0);
+	
+	
+	/*This attribute is never used, it is here just because Hibernate mapping*/
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL ,mappedBy = "atividadePredecessora")
+	private Set<AtividadeOrdem> atividades = new HashSet<AtividadeOrdem>(0);
+	
 
 	public Atividade() {
 	}
@@ -46,9 +67,6 @@ public class Atividade implements java.io.Serializable {
 		return habilidade.getNomeHabilidade();
 	}
 	
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id_atividade", unique = true, nullable = false)
 	public Integer getIdAtividade() {
 		return this.idAtividade;
 	}
@@ -57,8 +75,6 @@ public class Atividade implements java.io.Serializable {
 		this.idAtividade = idAtividade;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_processo", nullable = false)
 	public Processo getProcesso() {
 		return this.processo;
 	}
@@ -67,8 +83,6 @@ public class Atividade implements java.io.Serializable {
 		this.processo = processo;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_hablidade", nullable = false)
 	public Habilidade getHabilidade() {
 		return this.habilidade;
 	}
@@ -77,7 +91,6 @@ public class Atividade implements java.io.Serializable {
 		this.habilidade = habilidade;
 	}
 	
-	@Column(name="nome_atividade", nullable = false)
 	public String getNomeAtividade() {
 		return nomeAtividade;
 	}
@@ -86,7 +99,6 @@ public class Atividade implements java.io.Serializable {
 		this.nomeAtividade = nomeAtividade;
 	}
 
-	@Column(name="is_atividade_final",nullable=false)
 	public boolean isAtividadeFinal() {
 		return atividadeFinal;
 	}
@@ -95,25 +107,20 @@ public class Atividade implements java.io.Serializable {
 		this.atividadeFinal = atividadeFinal;
 	}
 
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "atividadeByIdAtividade")
 	public Set<AtividadeOrdem> getAtividadeOrdemsForIdAtividade() {
 		return this.atividadeOrdemsForIdAtividade;
 	}
-
 	
-	public void setAtividadeOrdemsForIdAtividade(
-			Set<AtividadeOrdem> atividadeOrdemsForIdAtividade) {
+	public void setAtividadeOrdemsForIdAtividade(Set<AtividadeOrdem> atividadeOrdemsForIdAtividade) {
 		this.atividadeOrdemsForIdAtividade = atividadeOrdemsForIdAtividade;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL ,mappedBy = "atividadePredecessora")
-	public Set<AtividadeOrdem> getAtividadesPredecessoras() {
-		return this.atividadesPredecessoras;
+	public Set<AtividadeOrdem> getAtividades() {
+		return this.atividades;
 	}
 
-	public void setAtividadesPredecessoras(Set<AtividadeOrdem> atividadesPredecessoras) {
-		this.atividadesPredecessoras = atividadesPredecessoras;
+	public void setAtividades(Set<AtividadeOrdem> atividades) {
+		this.atividades = atividades;
 	}
 	
 }

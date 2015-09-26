@@ -12,12 +12,6 @@
 			<p:messages autoUpdate="true" />
 			<h:panelGrid columns="2">
 
-				<h:outputLabel for="atividade" value="Atividade:" />
-				<p:inputText id="atividade" required="true"
-					value="#{processosAtividadesController.atividade.nomeAtividade}"
-					requiredMessage="Por favor informe a atividade" 
-					maxlength="19"/>
-
 				<h:outputLabel for="habilidade" value="Habilidade:" />
 				<p:selectOneMenu value="#{processosAtividadesController.atividade.habilidade}"
 								 id="selectAtividade" converter="habilidadeConverter">
@@ -26,10 +20,6 @@
 									   var="hab" itemValue="#{hab}" itemLabel="#{hab.nomeHabilidade}" />
 				
 				</p:selectOneMenu>
-
-
-				<h:outputLabel for="atividadeInicial" value="Atividade inicial?" />
-				<p:selectBooleanCheckbox value="#{processosAtividadesController.atividade.atividadeFinal}" />
 			</h:panelGrid>
 
 			<p:separator />
@@ -37,7 +27,7 @@
 			<h:panelGrid columns="2" style="margin-left:50px">
 				<p:commandButton value="Salvar"
 								 actionListener="#{processosAtividadesController.addAtividade()}"
-								 update="formAtividadesProcessos:tabelaAtividades,formAddAtividade"
+								 update="formAtividadesProcessos,formAddAtividade"
 								 oncomplete="PF('addAtividade').hide()"/>
 			
 				<p:commandButton value="Cancelar" 

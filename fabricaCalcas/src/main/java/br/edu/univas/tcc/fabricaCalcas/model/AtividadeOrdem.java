@@ -24,14 +24,21 @@ public class AtividadeOrdem implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Integer idAtividadeOrdem;
-	private Atividade atividadePredecessora;
-	private Atividade atividadeByIdAtividade;
-
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id_atividade_ordem", unique = true, nullable = false)
+	private Integer idAtividadeOrdem;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_predecessora", nullable = false)
+	private Atividade atividadePredecessora;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_atividade", nullable = false)
+	private Atividade atividade;
+
+	
 	public Integer getIdAtividadeOrdem() {
 		return this.idAtividadeOrdem;
 	}
@@ -39,9 +46,7 @@ public class AtividadeOrdem implements java.io.Serializable {
 	public void setIdAtividadeOrdem(Integer idAtividadeOrdem) {
 		this.idAtividadeOrdem = idAtividadeOrdem;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_predecessora", nullable = false)
+	
 	public Atividade getAtividadePredecessora() {
 		return this.atividadePredecessora;
 	}
@@ -50,14 +55,11 @@ public class AtividadeOrdem implements java.io.Serializable {
 		this.atividadePredecessora = atividadePredecessora;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_atividade", nullable = false)
-	public Atividade getAtividadeByIdAtividade() {
-		return this.atividadeByIdAtividade;
+	public Atividade getAtividade() {
+		return this.atividade;
 	}
 
-	public void setAtividadeByIdAtividade(Atividade atividadeByIdAtividade) {
-		this.atividadeByIdAtividade = atividadeByIdAtividade;
+	public void setAtividade(Atividade atividade) {
+		this.atividade = atividade;
 	}
-
 }

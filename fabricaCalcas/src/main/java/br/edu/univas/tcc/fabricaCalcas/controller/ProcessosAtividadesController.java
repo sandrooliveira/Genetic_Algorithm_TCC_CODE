@@ -1,9 +1,11 @@
 package br.edu.univas.tcc.fabricaCalcas.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -27,83 +29,204 @@ import br.edu.univas.tcc.fabricaCalcas.model.Processo;
 @ViewScoped
 public class ProcessosAtividadesController {
 
-	private Habilidade habilidade;
-	public static List<Habilidade> habilidades;
+	public List<Habilidade> habilidades;
 	private List<Atividade> atividades;
+	private List<Atividade> atividadesCombobox;
+	private List<Atividade> atividadesComboboxPredecessora;
+	
 	private Atividade atividade;
 	private Atividade atividadeToEdit;
 	private Atividade atividadeToDelete;
+	
+	private Atividade atividadeToAddOnFluxograma;
+	private Atividade atividadePredecessora;
 
-	HabilidadeDAO habDao;
-	AtividadeDAO atDao;
-	ProcessoDAO processDao;
+	private HabilidadeDAO habilidadeDao;
+	private AtividadeDAO atividadeDao;
+	private ProcessoDAO processoDao;
 
+	//TODO: pegar o parâmetro da requisição
 	private int idProcessoRequest = 80;
 	private Processo processo;
-
+	private Atividade atividadeFinal;
+	
 	private TreeNode root;
 
 	@PostConstruct
 	public void init() {
 
-		EntityManagerFactory factory = Persistence
-				.createEntityManagerFactory("db_pu");
+		EntityManagerFactory factory = Persistence.createEntityManagerFactory("db_pu");
 		EntityManager manager = factory.createEntityManager();
+		
+		/*Instancia todos os DAOs a serem utilizados*/
+		habilidadeDao = new HabilidadeDAO(manager);
+		atividadeDao = new AtividadeDAO(manager);
+		processoDao = new ProcessoDAO(manager);
 
-		habDao = new HabilidadeDAO(manager);
-		atDao = new AtividadeDAO(manager);
-		processDao = new ProcessoDAO(manager);
-
-		processo = processDao.getProcessoByID(idProcessoRequest);
-		atividades = atDao.listAtividadesByProcesso(idProcessoRequest);
-		habilidades = habDao.listAllHabilidades();
+		/*Recuperar objeto de processo através do ID vindo da requisição*/
+		processo = processoDao.getProcessoByID(idProcessoRequest);
+		
+		/*Recupera atividades para listar na tabela*/
+		atividades = new ArrayList<Atividade>(processo.getAtividades());
+		atividadeFinal = getAtividadeFinal();
+		atividades.remove(atividadeFinal);
+		
+		atividadesCombobox = new ArrayList<Atividade>();
+		
+		/*Recupera as atividades para listar no combobox de predecessoras*/
+		atividadesComboboxPredecessora = new ArrayList<Atividade>(processo.getAtividades());
+		
+		/*Recupera todas as habilidades disponíveis*/
+		habilidades = habilidadeDao.listAllHabilidades();
+		
+		removerHabilidadesJaAdicionadas();
+		
 		atividade = new Atividade();
 
-		Atividade atividadeFinal = getAtividadeFinal();
+		/*Construir árvore*/
 		if (atividadeFinal != null) {
-			root = newNodeWithChildren(atividadeFinal, null);
-			Atividade teste = (Atividade) root.getData();
-			System.out.println(teste.getNomeAtividade());
+			root = construirArvore(atividadeFinal, null);
 		} else {
-			// TODO: Colocar msg de erro
+			sendMessageToView("Não há atividade final definida!", FacesMessage.SEVERITY_ERROR);
 		}
 	}
 
-	public TreeNode newNodeWithChildren(Atividade ttParent, TreeNode parent) {
+	
+	/*Fluxograma handling*/
+	public TreeNode construirArvore(Atividade ttParent, TreeNode parent) {
+		atividadesComboboxPredecessora.remove(ttParent);
+		
+		/*Recupera as atividades para listar no combobox de atividades*/
+		if(!atividadesCombobox.contains(ttParent)){
+			atividadesCombobox.add(ttParent);	
+		}
+		
 		TreeNode newNode = new DefaultTreeNode(ttParent, parent);
+		newNode.setExpanded(true);
 		for (AtividadeOrdem tt : ttParent.getAtividadeOrdemsForIdAtividade()) {
-			TreeNode newNode2 = newNodeWithChildren(
-					tt.getAtividadePredecessora(), newNode);
+			 construirArvore(tt.getAtividadePredecessora(), newNode);
 		}
 		return newNode;
 	}
+	
+	public void addPredecessora(){
+		if(atividadeFinal != null){
+			if(atividadeToAddOnFluxograma.getIdAtividade() != atividadePredecessora.getIdAtividade()){
+				AtividadeOrdem ao = new AtividadeOrdem();
+				ao.setAtividade(atividadeToAddOnFluxograma);
+				ao.setAtividadePredecessora(atividadePredecessora);
+				
+				atividadeDao.addAtividadeOrdem(ao);
+				atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().add(ao);
+				
+				atividadesComboboxPredecessora.remove(atividadePredecessora);
+				atividadesCombobox.add(atividadePredecessora);
+				
+				atividadeInicialHandling();
+				
+				/*Construir árvore*/
+				root = construirArvore(atividadeFinal, null);
+				
+			}else{
+				sendMessageToView("As atividades são iguais", FacesMessage.SEVERITY_ERROR);
+				return;
+			}
+		}else{
+			root = null;
+			sendMessageToView("Não há atividade final definida!", FacesMessage.SEVERITY_ERROR);
+			return;
+		}
+		
+	}
 
+	public void atividadeInicialHandling(){
+		AtividadeOrdem atComPredecessoraCarimbo = null;
+		
+		for(AtividadeOrdem ao : atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade()){
+			if(ao.getAtividadePredecessora().getHabilidade().getNomeHabilidade().equals("Carimbo")){
+				atComPredecessoraCarimbo = ao;
+				atividadeDao.removeAtividadeOrdem(atComPredecessoraCarimbo);
+				break;
+			}
+		}
+		atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().remove(atComPredecessoraCarimbo);
+		
+		AtividadeOrdem newAtividadeOrdem = new AtividadeOrdem();
+		newAtividadeOrdem.setAtividade(atividadePredecessora);
+		newAtividadeOrdem.setAtividadePredecessora(atComPredecessoraCarimbo.getAtividadePredecessora());
+		atividadeDao.addAtividadeOrdem(newAtividadeOrdem);
+		
+		atividadePredecessora.getAtividadeOrdemsForIdAtividade().add(newAtividadeOrdem);
+	}
+	
+	public Atividade getAtividadeFinal() {
+		for (Atividade atividade : atividades) {
+			if (atividade.isAtividadeFinal())
+				return atividade;
+		}
+		return null;
+	}
+	
+	
+	/*Messages Handling*/
+	public void sendMessageToView(String message,Severity severity) {
+		FacesContext contexto = FacesContext.getCurrentInstance();
+		contexto.addMessage(null, 
+							new FacesMessage(severity, message, null));
+	}
+	
+	/*////////CRUD//////////*/
+	public void checkNovAtividade(){
+		if(!habilidades.isEmpty()){
+			RequestContext request = RequestContext.getCurrentInstance();
+			request.execute("PF('addAtividade').show();");
+		}else{
+			sendMessageToView("Todas as habilidades já foram distribuídas em atividades!", FacesMessage.SEVERITY_WARN);
+		}
+	}
+	
 	public void addAtividade() {
-		// Habilidade habilidade = habDao.selectHabilidadeById(idHabilidade);
 		atividade.setProcesso(processo);
-		atDao.addNovaAtividade(atividade);
+		atividade.setNomeAtividade("AT_"+atividade.getHabilidade().getNomeHabilidade());
+		atividadeDao.addNovaAtividade(atividade);
 
-		FacesContext.getCurrentInstance().addMessage(
-				null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Atividade adicionada com sucesso!", null));
+		sendMessageToView("Atividade adicionada com sucesso!",FacesMessage.SEVERITY_INFO);
 		atividades.add(atividade);
+		atividadesComboboxPredecessora.add(atividade);
 		habilidades.remove(atividade.getHabilidade());
+		
+		/*Construir árvore*/
+		if (atividadeFinal != null) {
+			root = construirArvore(atividadeFinal, null);
+		} else {
+			root = null;
+			sendMessageToView("Não há atividade final definida!", FacesMessage.SEVERITY_ERROR);
+		}
+		
+		removerHabilidadesJaAdicionadas();
 		atividade = new Atividade();
 	}
 
-	public Habilidade getHabilidade() {
-		return habilidade;
+	public void loadAtividadeToEdit(Atividade atividade) {
+		this.atividadeToEdit = atividade;
+		if(!habilidades.contains(atividade.getHabilidade())){
+			habilidades.add(atividade.getHabilidade());
+		}
 	}
-
-	public void setHabilidade(Habilidade habilidade) {
-		this.habilidade = habilidade;
-	}
-
+	
 	public void updateAtividade() {
-		// Habilidade habilidade = habDao.selectHabilidadeById(idHabilidade);
-		atDao.updateAtividade(atividadeToEdit);
-
+		atividadeToEdit.setNomeAtividade("AT_" + atividadeToEdit.getHabilidade().getNomeHabilidade());
+		atividadeDao.updateAtividade(atividadeToEdit);
+		habilidades.remove(atividadeToEdit.getHabilidade());
+		
+		/*Construir árvore*/
+		if (atividadeFinal != null) {
+			root = construirArvore(atividadeFinal, null);
+		} else {
+			root = null;
+			sendMessageToView("Não há atividade final definida!", FacesMessage.SEVERITY_ERROR);
+		}
+		
 		FacesContext.getCurrentInstance().addMessage(
 				null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -113,23 +236,21 @@ public class ProcessosAtividadesController {
 		request.execute("PF('editAtividade').hide()");
 	}
 
-	public Atividade getAtividadeFinal() {
-		for (Atividade atividade : atividades) {
-			if (atividade.isAtividadeFinal())
-				return atividade;
-		}
-		return null;
-	}
-
-	public void loadAtividadeToEdit(Atividade atividade) {
-		this.atividadeToEdit = atividade;
-		habilidade = atividade.getHabilidade();
-	}
-
 	public void loadAtividadeToDelete(Atividade atividade) {
 		this.atividadeToDelete = atividade;
 	}
+	
+	public void removerHabilidadesJaAdicionadas(){
+		for(Atividade atividade : atividades){
+			if(habilidades.contains(atividade.getHabilidade())){
+				habilidades.remove(atividade.getHabilidade());
+			}
+		}
+		habilidades.remove(atividadeFinal.getHabilidade());
+	}
 
+	
+	/*////////GETTERS AND SETTERS//////////*/
 	public List<Atividade> getAtividades() {
 		return atividades;
 	}
@@ -176,6 +297,39 @@ public class ProcessosAtividadesController {
 
 	public void setRoot(TreeNode root) {
 		this.root = root;
+	}
+
+	public Atividade getAtividadeToAddOnFluxograma() {
+		return atividadeToAddOnFluxograma;
+	}
+
+	public void setAtividadeToAddOnFluxograma(Atividade atividadeToAddOnFluxograma) {
+		this.atividadeToAddOnFluxograma = atividadeToAddOnFluxograma;
+	}
+
+	public Atividade getAtividadePredecessora() {
+		return atividadePredecessora;
+	}
+
+	public void setAtividadePredecessora(Atividade atividadePredecessora) {
+		this.atividadePredecessora = atividadePredecessora;
+	}
+
+	public List<Atividade> getAtividadesCombobox() {
+		return atividadesCombobox;
+	}
+
+	public void setAtividadesCombobox(List<Atividade> atividadesCombobox) {
+		this.atividadesCombobox = atividadesCombobox;
+	}
+
+	public List<Atividade> getAtividadesComboboxPredecessora() {
+		return atividadesComboboxPredecessora;
+	}
+
+	public void setAtividadesComboboxPredecessora(
+			List<Atividade> atividadesComboboxPredecessora) {
+		this.atividadesComboboxPredecessora = atividadesComboboxPredecessora;
 	}
 
 }
