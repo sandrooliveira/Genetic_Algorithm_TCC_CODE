@@ -49,6 +49,7 @@ public class ProcessosAtividadesController {
 	private int idProcessoRequest = 80;
 	private Processo processo;
 	private Atividade atividadeFinal;
+	private Atividade atividadeInicial;
 	
 	private TreeNode root;
 
@@ -94,10 +95,18 @@ public class ProcessosAtividadesController {
 	
 	/*Fluxograma handling*/
 	public TreeNode construirArvore(Atividade ttParent, TreeNode parent) {
+		/*Isso é para remover as atividades já adicionadas na árvore do combo de predecessoras*/
 		atividadesComboboxPredecessora.remove(ttParent);
 		
+		/*Isso é para recuperar a atividade inicial (Carimbo) e removê-la
+		 *da lista de atividades (tabela)*/
+		if(ttParent.getHabilidade().getNomeHabilidade().equals("Carimbo")){
+			atividadeInicial = ttParent;
+			atividades.remove(atividadeInicial);
+		}
+		
 		/*Recupera as atividades para listar no combobox de atividades*/
-		if(!atividadesCombobox.contains(ttParent)){
+		if(!atividadesCombobox.contains(ttParent) && atividadeInicial != ttParent){
 			atividadesCombobox.add(ttParent);	
 		}
 		
@@ -111,24 +120,31 @@ public class ProcessosAtividadesController {
 	
 	public void addPredecessora(){
 		if(atividadeFinal != null){
-			if(atividadeToAddOnFluxograma.getIdAtividade() != atividadePredecessora.getIdAtividade()){
-				AtividadeOrdem ao = new AtividadeOrdem();
-				ao.setAtividade(atividadeToAddOnFluxograma);
-				ao.setAtividadePredecessora(atividadePredecessora);
-				
-				atividadeDao.addAtividadeOrdem(ao);
-				atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().add(ao);
-				
-				atividadesComboboxPredecessora.remove(atividadePredecessora);
-				atividadesCombobox.add(atividadePredecessora);
-				
-				atividadeInicialHandling();
-				
-				/*Construir árvore*/
-				root = construirArvore(atividadeFinal, null);
-				
+			if(atividadePredecessora != null){
+				if(atividadeToAddOnFluxograma.getIdAtividade() != atividadePredecessora.getIdAtividade()){
+					AtividadeOrdem ao = new AtividadeOrdem();
+					ao.setAtividade(atividadeToAddOnFluxograma);
+					ao.setAtividadePredecessora(atividadePredecessora);
+					
+					atividadeDao.addAtividadeOrdem(ao);
+					atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().add(ao);
+					
+					atividadesComboboxPredecessora.remove(atividadePredecessora);
+					atividadesCombobox.add(atividadePredecessora);
+					
+					atividadeInicialHandling();
+					
+					/*Construir árvore*/
+					root = construirArvore(atividadeFinal, null);
+					
+					sendMessageToView("Atividade adicionada com sucesso ao fluxograma", FacesMessage.SEVERITY_INFO);
+					
+				}else{
+					sendMessageToView("As atividades são iguais", FacesMessage.SEVERITY_ERROR);
+					return;
+				}
 			}else{
-				sendMessageToView("As atividades são iguais", FacesMessage.SEVERITY_ERROR);
+				sendMessageToView("Todas as atividades já foram adicionadas!", FacesMessage.SEVERITY_WARN);
 				return;
 			}
 		}else{
@@ -141,22 +157,23 @@ public class ProcessosAtividadesController {
 
 	public void atividadeInicialHandling(){
 		AtividadeOrdem atComPredecessoraCarimbo = null;
-		
-		for(AtividadeOrdem ao : atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade()){
-			if(ao.getAtividadePredecessora().getHabilidade().getNomeHabilidade().equals("Carimbo")){
-				atComPredecessoraCarimbo = ao;
-				atividadeDao.removeAtividadeOrdem(atComPredecessoraCarimbo);
-				break;
+			for(AtividadeOrdem ao : atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade()){
+				if(ao.getAtividadePredecessora().getHabilidade().getNomeHabilidade().equals("Carimbo")){
+					atComPredecessoraCarimbo = ao;
+					atividadeDao.removeAtividadeOrdem(atComPredecessoraCarimbo);
+					break;
+				}
 			}
-		}
-		atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().remove(atComPredecessoraCarimbo);
-		
-		AtividadeOrdem newAtividadeOrdem = new AtividadeOrdem();
-		newAtividadeOrdem.setAtividade(atividadePredecessora);
-		newAtividadeOrdem.setAtividadePredecessora(atComPredecessoraCarimbo.getAtividadePredecessora());
-		atividadeDao.addAtividadeOrdem(newAtividadeOrdem);
-		
-		atividadePredecessora.getAtividadeOrdemsForIdAtividade().add(newAtividadeOrdem);
+			if(atComPredecessoraCarimbo != null){
+			   atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().remove(atComPredecessoraCarimbo);
+			}
+			
+			AtividadeOrdem newAtividadeOrdem = new AtividadeOrdem();
+			newAtividadeOrdem.setAtividade(atividadePredecessora);
+			newAtividadeOrdem.setAtividadePredecessora(atividadeInicial);
+			atividadeDao.addAtividadeOrdem(newAtividadeOrdem);
+			
+			atividadePredecessora.getAtividadeOrdemsForIdAtividade().add(newAtividadeOrdem);
 	}
 	
 	public Atividade getAtividadeFinal() {
