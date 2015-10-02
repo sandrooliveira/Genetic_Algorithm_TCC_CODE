@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formExcluirAtividade">
+		<p:confirmDialog header="Excluir Atividade"
+						 message="Tem certeza que deseja excluir esta atividade? Se houver atividades predecessoras,
+						 		 estas irão ser removidas do fluxograma."
+						 widgetVar="modalExluirAtividade">
+				
+				<p:commandButton value="Sim"
+								 action="#{processosAtividadesController.excluirAtividade()}" 
+								 oncomplete="PF('modalExluirAtividade').hide()"
+								 update="formAtividadesProcessos"/>
+		
+				<p:commandButton value="Não"
+								 onclick="PF('modalExluirAtividade').hide()"
+								 action="#{processosAtividadesController.removeAtToDelete()}" />
+		</p:confirmDialog>
+	</h:form>
+</ui:composition>

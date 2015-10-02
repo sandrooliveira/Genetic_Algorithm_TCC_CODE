@@ -18,6 +18,7 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import br.edu.univas.tcc.fabricaCalcas.dao.AtividadeDAO;
+import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;
 import br.edu.univas.tcc.fabricaCalcas.dao.HabilidadeDAO;
 import br.edu.univas.tcc.fabricaCalcas.dao.ProcessoDAO;
 import br.edu.univas.tcc.fabricaCalcas.model.Atividade;
@@ -56,8 +57,7 @@ public class ProcessosAtividadesController {
 	@PostConstruct
 	public void init() {
 
-		EntityManagerFactory factory = Persistence.createEntityManagerFactory("db_pu");
-		EntityManager manager = factory.createEntityManager();
+		EntityManager manager = ConFactory.getConn();
 		
 		/*Instancia todos os DAOs a serem utilizados*/
 		habilidadeDao = new HabilidadeDAO(manager);
@@ -95,6 +95,11 @@ public class ProcessosAtividadesController {
 	
 	/*Fluxograma handling*/
 	public TreeNode construirArvore(Atividade ttParent, TreeNode parent) {
+		AtividadeOrdem aoToBeDeleted = null;
+		AtividadeOrdem newAtividadeOrdem  = null;
+		boolean removerAo = false;
+		boolean setarValorInicial = false;
+		
 		/*Isso é para remover as atividades já adicionadas na árvore do combo de predecessoras*/
 		atividadesComboboxPredecessora.remove(ttParent);
 		
@@ -112,10 +117,74 @@ public class ProcessosAtividadesController {
 		
 		TreeNode newNode = new DefaultTreeNode(ttParent, parent);
 		newNode.setExpanded(true);
+		aoToBeDeleted = checarSeAtividadeDeletadaEstaNoFluxograma(ttParent);
 		for (AtividadeOrdem tt : ttParent.getAtividadeOrdemsForIdAtividade()) {
-			 construirArvore(tt.getAtividadePredecessora(), newNode);
+			
+			/* Remove a atividade a ser deletada (se tiver) do fluxograma */
+			if (aoToBeDeleted != null){
+				removerAo = true;
+				if(ttParent.getAtividadeOrdemsForIdAtividade().size() == 1 && !setarValorInicial){
+					setarValorInicial = true;
+				    newAtividadeOrdem = new AtividadeOrdem();
+					newAtividadeOrdem.setAtividade(ttParent);
+					newAtividadeOrdem.setAtividadePredecessora(atividadeInicial);
+					atividadeDao.addAtividadeOrdem(newAtividadeOrdem);
+					construirArvore(atividadeInicial, newNode);
+				}else{
+					if(aoToBeDeleted != tt){
+						construirArvore(tt.getAtividadePredecessora(), newNode);
+					}else{
+						continue;
+					}
+				}
+			}else{
+				construirArvore(tt.getAtividadePredecessora(), newNode);
+			}
 		}
+		if(setarValorInicial){
+			ttParent.getAtividadeOrdemsForIdAtividade().add(newAtividadeOrdem);
+			setarValorInicial = false;
+		}
+		if(removerAo){
+			ttParent.getAtividadeOrdemsForIdAtividade().remove(aoToBeDeleted);
+			removerAo = false;
+		}
+		/*Remover atividades predecessoras da atividade deletada e voltar as atividades nos combos*/
+		rmApFromAtToBeDeleted(atividadeToDelete);
+		
 		return newNode;
+	}
+	
+	public AtividadeOrdem checarSeAtividadeDeletadaEstaNoFluxograma(Atividade atividade){
+		for(AtividadeOrdem ao : atividade.getAtividadeOrdemsForIdAtividade()){
+			if(ao != null){
+				if(ao.getAtividadePredecessora() == atividadeToDelete){
+					return ao;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public void rmApFromAtToBeDeleted(Atividade atividade){
+		if(atividade != null){
+			List<AtividadeOrdem> aoTobeRemoved = new ArrayList<AtividadeOrdem>();
+			for(AtividadeOrdem ao : atividade.getAtividadeOrdemsForIdAtividade()){
+				atividadeDao.removeAtividadeOrdem(ao);
+				aoTobeRemoved.add(ao);
+				rmApFromAtToBeDeleted(ao.getAtividadePredecessora());
+				
+				/*Voltar/remover atividades dos combos*/
+				System.out.println(ao.getAtividadePredecessora().getNomeAtividade());
+				if(!ao.getAtividadePredecessora().getNomeAtividade().equals("AT_Carimbo")){
+					if(!atividadesComboboxPredecessora.contains(ao.getAtividadePredecessora())){
+						atividadesComboboxPredecessora.add(ao.getAtividadePredecessora());
+					}
+					atividadesCombobox.remove(ao.getAtividadePredecessora());
+				}
+			}
+			atividade.getAtividadeOrdemsForIdAtividade().removeAll(aoTobeRemoved);
+		}
 	}
 	
 	public void addPredecessora(){
@@ -157,23 +226,23 @@ public class ProcessosAtividadesController {
 
 	public void atividadeInicialHandling(){
 		AtividadeOrdem atComPredecessoraCarimbo = null;
-			for(AtividadeOrdem ao : atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade()){
-				if(ao.getAtividadePredecessora().getHabilidade().getNomeHabilidade().equals("Carimbo")){
-					atComPredecessoraCarimbo = ao;
-					atividadeDao.removeAtividadeOrdem(atComPredecessoraCarimbo);
-					break;
-				}
+		for(AtividadeOrdem ao : atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade()){
+			if(ao.getAtividadePredecessora().getHabilidade().getNomeHabilidade().equals("Carimbo")){
+				atComPredecessoraCarimbo = ao;
+				atividadeDao.removeAtividadeOrdem(atComPredecessoraCarimbo);
+				break;
 			}
-			if(atComPredecessoraCarimbo != null){
-			   atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().remove(atComPredecessoraCarimbo);
-			}
-			
-			AtividadeOrdem newAtividadeOrdem = new AtividadeOrdem();
-			newAtividadeOrdem.setAtividade(atividadePredecessora);
-			newAtividadeOrdem.setAtividadePredecessora(atividadeInicial);
-			atividadeDao.addAtividadeOrdem(newAtividadeOrdem);
-			
-			atividadePredecessora.getAtividadeOrdemsForIdAtividade().add(newAtividadeOrdem);
+		}
+		if(atComPredecessoraCarimbo != null){
+		   atividadeToAddOnFluxograma.getAtividadeOrdemsForIdAtividade().remove(atComPredecessoraCarimbo);
+		}
+		
+		AtividadeOrdem newAtividadeOrdem = new AtividadeOrdem();
+		newAtividadeOrdem.setAtividade(atividadePredecessora);
+		newAtividadeOrdem.setAtividadePredecessora(atividadeInicial);
+		atividadeDao.addAtividadeOrdem(newAtividadeOrdem);
+		
+		atividadePredecessora.getAtividadeOrdemsForIdAtividade().add(newAtividadeOrdem);
 	}
 	
 	public Atividade getAtividadeFinal() {
@@ -255,6 +324,28 @@ public class ProcessosAtividadesController {
 
 	public void loadAtividadeToDelete(Atividade atividade) {
 		this.atividadeToDelete = atividade;
+	}
+	
+	public void removeAtToDelete(){
+		this.atividadeToDelete = null;
+	}
+	
+	public void excluirAtividade(){
+		atividadeDao.removeAtividade(atividadeToDelete);
+		habilidades.add(atividadeToDelete.getHabilidade());
+		atividades.remove(atividadeToDelete);
+		atividadesCombobox.remove(atividadeToDelete);
+		atividadesComboboxPredecessora.remove(atividadeToDelete);
+		
+		/*Construir árvore*/
+		if (atividadeFinal != null) {
+			root = construirArvore(atividadeFinal, null);
+		} else {
+			root = null;
+			sendMessageToView("Não há atividade final definida!", FacesMessage.SEVERITY_ERROR);
+		}
+		
+		sendMessageToView("Atividade deletada com sucesso!", FacesMessage.SEVERITY_INFO);
 	}
 	
 	public void removerHabilidadesJaAdicionadas(){

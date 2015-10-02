@@ -36,7 +36,7 @@
 
 				<p:commandButton id="buttonExcluir" icon="ui-icon-trash"
 					actionListener="#{processosAtividadesController.loadAtividadeToDelete(atividade)}"
-					oncomplete="PF('modalExluirProcesso').show()" />
+					oncomplete="PF('modalExluirAtividade').show()" />
 			</p:column>
 
 		</p:dataTable>
@@ -87,4 +87,5 @@
 	
 	<ui:include src="addAtividadeDialog.xhtml" />
 	<ui:include src="editAtividadeDialog.xhtml" />
+	<ui:include src="confirmExcluirAtividadeDialog.xhtml" />
 </ui:composition>

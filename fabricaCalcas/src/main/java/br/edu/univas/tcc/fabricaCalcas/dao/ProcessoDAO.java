@@ -22,12 +22,14 @@ public class ProcessoDAO {
 	}
 	
 	public List<Processo> listAllProcessos(){
+		manager.clear();
 		String q = "Select p from Processo p ORDER BY p.idProcesso DESC";
 		TypedQuery<Processo> query = manager.createQuery(q,Processo.class);
 		return query.getResultList();
 	}
 	
 	public Processo getProcessoByID(int idProcesso){
+		manager.clear();
 		String query = "SELECT p from Processo p where p.idProcesso = :idProcesso";
 		TypedQuery<Processo> q = manager.createQuery(query,Processo.class);
 		q.setParameter("idProcesso", idProcesso);
