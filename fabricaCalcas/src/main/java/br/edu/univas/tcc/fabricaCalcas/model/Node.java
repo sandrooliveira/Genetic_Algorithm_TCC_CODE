@@ -12,14 +12,17 @@ public class Node {
 	private List<Node> predecesoras = new ArrayList<Node>();
 	private List<Chromosome> cromossomos;
 	private Atividade atividade;
+	private int pecasPorLote;
 	
-	public Node(Atividade atividade,Map<Integer,List<Chromosome>> atividadeCromossomos){
+	public Node(Atividade atividade,Map<Integer,List<Chromosome>> atividadeCromossomos, int pecasPorLote){
 		this.atividade = atividade;
+		this.pecasPorLote = pecasPorLote;
 		cromossomos = atividadeCromossomos.get(atividade.getIdAtividade());
 		Atividade atividadePredecessora = null;
+		
 		for(AtividadeOrdem predecessora : atividade.getAtividadeOrdemsForIdAtividade()){
 			atividadePredecessora = predecessora.getAtividadePredecessora();
-			predecesoras.add(new Node(atividadePredecessora,atividadeCromossomos));
+			predecesoras.add(new Node(atividadePredecessora,atividadeCromossomos,pecasPorLote));
 		}
 	}
 	
@@ -51,6 +54,7 @@ public class Node {
 	public long getValorTotal(){
 		long valor =  0;
 		long maior = 0;
+		
 		for(Chromosome chromosome : cromossomos){
 			ProcessoChromosome processoChromosome = (ProcessoChromosome) chromosome;
 			if(processoChromosome.getQuantidade_lotes() > 0){
@@ -65,7 +69,7 @@ public class Node {
 	
 	public long getCromossomeValue(ProcessoChromosome processoChromosome,int qtdeLote){
 		long valor = 0;
-		valor = qtdeLote * 50 * processoChromosome.getCostureiraHabilidade().getTempoPorPeca();
+		valor = qtdeLote * pecasPorLote * processoChromosome.getCostureiraHabilidade().getTempoPorPeca();
 		valor += getTempoRecebimentoPecas(processoChromosome,qtdeLote);
 		return valor;
 	}
@@ -126,16 +130,12 @@ public class Node {
 				Math.pow(posicaoCostureiraX - posicaoCostureiraBeforeX, 2)+
 				Math.pow(posicaoCostureiraY - posicaoCostureiraBeforeY, 2));
 		
-		/*System.out.println("Distancia entre a " + processoChromosome.getCostureiraHabilidade().getCostureira().getNomeCostureira());
-		System.out.println("e a " +processoChromosomeBefore.getCostureiraHabilidade().getCostureira().getNomeCostureira());
-		System.out.println(">>> "+distance);*/
-		
 		return distance * 100;
 	}
 	
+	/*Getters and setters*/
 	public List<Node> getPredecesoras() {
 		return predecesoras;
-		
 	}
 	
 	public void setPredecesoras(List<Node> predecesoras) {
@@ -156,6 +156,14 @@ public class Node {
 
 	public void setCromossomos(List<Chromosome> cromossomos) {
 		this.cromossomos = cromossomos;
+	}
+
+	public int getPecasPorLote() {
+		return pecasPorLote;
+	}
+
+	public void setPecasPorLote(int pecasPorLote) {
+		this.pecasPorLote = pecasPorLote;
 	}
 	
 }

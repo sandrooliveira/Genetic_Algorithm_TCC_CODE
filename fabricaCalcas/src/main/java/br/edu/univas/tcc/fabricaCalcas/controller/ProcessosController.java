@@ -10,12 +10,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.primefaces.context.RequestContext;
 
 import br.edu.univas.tcc.fabricaCalcas.dao.AtividadeDAO;
+import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;
 import br.edu.univas.tcc.fabricaCalcas.dao.HabilidadeDAO;
 import br.edu.univas.tcc.fabricaCalcas.dao.ProcessoDAO;
 import br.edu.univas.tcc.fabricaCalcas.model.Atividade;
@@ -39,10 +38,7 @@ public class ProcessosController {
 
 	@PostConstruct
 	public void init() {
-
-		EntityManagerFactory factory = Persistence
-				.createEntityManagerFactory("db_pu");
-		EntityManager manager = factory.createEntityManager();
+		EntityManager manager = ConFactory.getConn();
 
 		habDao = new HabilidadeDAO(manager);
 		atDao = new AtividadeDAO(manager);
@@ -166,5 +162,4 @@ public class ProcessosController {
 	public void setProcessos(List<Processo> processos) {
 		this.processos = processos;
 	}
-
 }

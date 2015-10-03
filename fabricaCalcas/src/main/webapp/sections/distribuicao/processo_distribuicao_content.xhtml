@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formProcessoDistribuicao">
+		<p:messages autoUpdate="true" />
+
+		<p:separator></p:separator>
+
+		<p:dataTable var="processoDis" value="#{distribuicaoController.processos}"
+			id="tabelaProcessosDistribuicao" style="text-align:center;" paginator="true"
+			rows="8" paginatorPosition="bottom">
+
+			<p:column headerText="Cliente">
+				<h:outputText value="#{processoDis.cliente}" />
+			</p:column>
+
+			<p:column headerText="Nome do modelo">
+				<h:outputText value="#{processoDis.nomeProcesso}" />
+			</p:column>
+
+			<p:column headerText="Data entrega">
+				<h:outputText value="#{processoDis.pegarDataFormatada()}" />
+			</p:column>
+
+			<p:column headerText="Opções" id="opcoes">
+				<p:commandButton id="buttonOpen" icon="ui-icon-folder-open" 
+					actionListener="#{distribuicaoController.abrirProcessoToDistribuicao(processoDis.idProcesso)}"
+					ajax="false"/>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+
+</ui:composition>

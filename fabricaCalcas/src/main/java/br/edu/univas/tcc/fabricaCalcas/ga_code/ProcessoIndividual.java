@@ -15,28 +15,32 @@ public class ProcessoIndividual extends Individual {
 
 	private Atividade atividadeFinal;
 	private Node node;
+	private int numeroLote;
+	private int pecasPorLote;
 
-	public ProcessoIndividual(Atividade atividadeInicial,
-			Map<Integer, List<CostureiraHabilidade>> atividadesCostureiras) {
+	public ProcessoIndividual(Atividade atividadeInicial,Map<Integer, List<CostureiraHabilidade>> atividadesCostureiras,
+			int numeroLote, int pecasPorLote){
+		
 		chromosomes = new ArrayList<Chromosome>();
+		
 		this.atividadeFinal = atividadeInicial;
+		this.numeroLote = numeroLote;
+		this.pecasPorLote = pecasPorLote;
 
-		int qtdeLote = 10;
+		int qtdeLote = 0;
 		int cont = 0;
 
 		for (Integer key : atividadesCostureiras.keySet()) {
-			qtdeLote = 10;
+			qtdeLote = numeroLote;
 			cont = 0;
 
-			for (CostureiraHabilidade costureiraHabilidade : atividadesCostureiras
-					.get(key)) {
+			for (CostureiraHabilidade costureiraHabilidade : atividadesCostureiras.get(key)) {
 				int loteCostureira = (int) (Math.random() * qtdeLote);
+				
 				if (cont != atividadesCostureiras.get(key).size() - 1) {
-					chromosomes.add(new ProcessoChromosome(key,
-							costureiraHabilidade, loteCostureira));
+					chromosomes.add(new ProcessoChromosome(key,costureiraHabilidade, loteCostureira));
 				} else {
-					chromosomes.add(new ProcessoChromosome(key,
-							costureiraHabilidade, qtdeLote));
+					chromosomes.add(new ProcessoChromosome(key,costureiraHabilidade, qtdeLote));
 				}
 				qtdeLote -= loteCostureira;
 				cont++;
@@ -44,10 +48,12 @@ public class ProcessoIndividual extends Individual {
 		}
 	}
 
-	public ProcessoIndividual(Atividade atividadeInicial,
-			ArrayList<Chromosome> chromosomes) {
+	public ProcessoIndividual(Atividade atividadeInicial,ArrayList<Chromosome> chromosomes,
+			int numeroLote, int pecasPorLote) {
 		super(chromosomes);
 		this.atividadeFinal = atividadeInicial;
+		this.numeroLote = numeroLote;
+		this.pecasPorLote = pecasPorLote;
 	}
 
 	public void calculateValue() {
@@ -57,20 +63,16 @@ public class ProcessoIndividual extends Individual {
 
 		for (Chromosome chromosome : chromosomes) {
 			ProcessoChromosome processoChromossome = (ProcessoChromosome) chromosome;
-
-			//System.out.println("Costureira: " + processoChromossome.getCostureiraHabilidade().getCostureira().getNomeCostureira());
-			//System.out.println("Lotes: " + processoChromossome.getQuantidade_lotes());
 			
-			if (lastAtividade == null
-					|| lastAtividade != processoChromossome.getAtividade()) {
+			if (lastAtividade == null || lastAtividade != processoChromossome.getAtividade()) {
 				cromossomos = new ArrayList<Chromosome>();
-				atividadeCromossomos.put(processoChromossome.getAtividade(),
-						cromossomos);
+				
+				atividadeCromossomos.put(processoChromossome.getAtividade(),cromossomos);
 				lastAtividade = processoChromossome.getAtividade();
 			}
 			cromossomos.add(processoChromossome);
 		}
-		node = new Node(atividadeFinal, atividadeCromossomos);
+		node = new Node(atividadeFinal, atividadeCromossomos,this.pecasPorLote);
 
 		/*
 		 * Só deve-se calcular o valor do indivíduo se ele nao foi calculado
@@ -78,8 +80,8 @@ public class ProcessoIndividual extends Individual {
 		 */
 		if (getValue() == 0) {
 			setValue(node.getValorTotal());
+			setRootNode(node);
 		}
-		//System.out.println(getValue());
 	}
 
 	@Override
@@ -107,5 +109,21 @@ public class ProcessoIndividual extends Individual {
 
 	public void setNode(Node node) {
 		this.node = node;
+	}
+
+	public int getNumeroLote() {
+		return numeroLote;
+	}
+
+	public void setNumeroLote(int numeroLote) {
+		this.numeroLote = numeroLote;
+	}
+
+	public int getPecasPorLote() {
+		return pecasPorLote;
+	}
+
+	public void setPecasPorLote(int pecasPorLote) {
+		this.pecasPorLote = pecasPorLote;
 	}
 }

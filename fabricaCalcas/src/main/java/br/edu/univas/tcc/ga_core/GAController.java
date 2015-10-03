@@ -13,7 +13,7 @@ public class GAController {
 		this.model = model;
 	}
 	
-	public void execute(){
+	public Individual execute(){
 		model.createInitialPopulation();
 		Individual lastBest = null;
 		
@@ -67,7 +67,7 @@ public class GAController {
 			
 			model.setPopulation(newGeneration);
 		}
-		//printResult();
+		return lastBest;
 	}
 	
 	public void doMutation(Individual individual){

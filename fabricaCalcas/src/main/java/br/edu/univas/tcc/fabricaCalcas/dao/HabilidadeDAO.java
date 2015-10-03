@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import br.edu.univas.tcc.fabricaCalcas.model.Atividade;
 import br.edu.univas.tcc.fabricaCalcas.model.CostureiraHabilidade;
 import br.edu.univas.tcc.fabricaCalcas.model.Habilidade;
 
