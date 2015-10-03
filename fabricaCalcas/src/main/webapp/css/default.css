@@ -29,6 +29,11 @@ form{
 	color: #8852;
 }
 
+.tituloCosturira{
+	font-size: 15px;
+	color: #8852;
+}
+
 .panelGridEscolherAtividadesOrder{
 	margin-bottom:10px;
 	border: none!important;

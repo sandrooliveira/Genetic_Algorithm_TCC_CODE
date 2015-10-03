@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formAddCostToAddHabilidade">
+		<p:dialog header="Adicionar costureira à habilidade" widgetVar="editHabilidade"
+			id="modalAddHabilidade" minHeight="100" modal="true">
+			<p:messages autoUpdate="true"></p:messages>
+			<p:separator></p:separator>
+			<h:outputLabel 
+						value="Costureiras para habilidade #{habilidadesController.habilidadeToEdit.nomeHabilidade}"
+						styleClass="tituloCosturira"></h:outputLabel>
+			<p:separator></p:separator>
+			
+			<p:panelGrid columns="8" styleClass="panelGridEscolherAtividadesOrder">
+				<p:outputLabel value="Costureira:"></p:outputLabel>
+				<p:selectOneMenu id="comboCostureira"
+								 value="#{habilidadesController.newCostureiraHabilidade.costureira}"
+								 converter="costureiraConverter">
+							
+							<f:selectItems value="#{habilidadesController.costureiras}"
+										   var="cost"
+										   itemValue="#{cost}"
+										   itemLabel="#{cost.nomeCostureira}"/>
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Tempo por peça:"></p:outputLabel>
+				<p:inputMask mask="9?999999" value="#{habilidadesController.newCostureiraHabilidade.tempoPorPeca}" 
+							required="true" requiredMessage="Por favor insira o tempo por peça!"
+							style="width:80px!important;" id="inputTempoPorPeca"/>
+							
+				<p:commandButton value="Add costureira" action="#{habilidadesController.addCostureiraNaHabilidade()}" 
+								 update="tabelaCostureiras,inputTempoPorPeca,comboCostureira"/>
+			</p:panelGrid>
+		
+			<p:dataTable value="#{habilidadesController.habilidadeToEdit.costureiraHabilidades.toArray()}"
+						 var="costHab" id="tabelaCostureiras" style="width:645px!important;text-align:center"
+						 paginator="true" paginatorPosition="bottom" rows="5">
+						 
+						 <p:column headerText="Costureira">
+						 	<h:outputLabel value="#{costHab.costureira.nomeCostureira}" />
+						 </p:column>
+						 
+						 <p:column headerText="Tempo por peça">
+						 	<h:outputLabel value="#{costHab.tempoPorPeca} segundo(s)" />
+						 </p:column>
+
+				<p:column headerText="Opções" id="Excluir">
+					<p:commandButton id="buttonExcluir" 
+									 action="#{habilidadesController.setarCostureiraASerRemovida(costHab)}"
+									 oncomplete="PF('modalExluirCostureira').show()" 
+									 icon="ui-icon-trash"/>
+				</p:column>
+			</p:dataTable>
+		</p:dialog>
+	</h:form>
+	<ui:include src="confirmExcluirCostureiraDialog.xhtml" />
+</ui:composition>

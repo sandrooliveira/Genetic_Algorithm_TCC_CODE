@@ -13,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 /**
@@ -53,6 +54,7 @@ public class Habilidade implements java.io.Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "habilidade")
+	@OrderBy(value="idCostureiraHabilidade")
 	public Set<CostureiraHabilidade> getCostureiraHabilidades() {
 		return this.costureiraHabilidades;
 	}

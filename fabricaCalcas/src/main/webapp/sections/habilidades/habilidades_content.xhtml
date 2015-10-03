@@ -5,27 +5,38 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 	
+	<p:messages autoUpdate="true"></p:messages>
 	<p:commandButton value="Adicionar" type="button" onclick="PF('addHabilidade').show();" />
 
 	<p:separator></p:separator>
 	
-	<p:dataTable var="habilidade" value="#{habilidadesController.habilidades}">
+	<p:dataTable var="hab" value="#{habilidadesController.habilidades}" style="text-align:center;"
+				 id="tabelaHabilidade" paginator="true" rows="8" paginatorPosition="bottom">
 		
 		<p:column headerText="Id">
-			<h:outputText value="#{habilidade.idHabilidade}" />
+			<h:outputText value="#{hab.idHabilidade}" />
 		</p:column>
 
 		<p:column headerText="Nome">
-			<h:outputText value="#{habilidade.nomeHabilidade}" />
+			<h:outputText value="#{hab.nomeHabilidade}" />
 		</p:column>
 		
 		<p:column headerText="Opções" id="opcoes">
+			
 			<p:commandButton  id="withIcon" icon="ui-icon-pencil" />
-			<p:commandButton  id="withIco" icon="ui-icon-closethick" />	
+			
+			<p:commandButton  id="withIco" icon="ui-icon-closethick"/>
+
+			<p:commandButton  id="withIc"  icon="ui-icon-folder-open" 
+							  action="#{habilidadesController.abrirHabilidade(hab)}"
+							  update="formAddCostToAddHabilidade"
+							  oncomplete="PF('editHabilidade').show()"/>
+			
 		</p:column>
 
 	</p:dataTable>
 
 	<ui:include src="addHabilidadesDialog.xhtml" />
+	<ui:include src="addCosToHabilidadeDialog.xhtml" />
 	
 </ui:composition>

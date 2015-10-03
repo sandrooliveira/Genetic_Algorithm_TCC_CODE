@@ -5,50 +5,32 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Adicionar Habilidades" widgetVar="addHabilidade"
-		minHeight="100" modal="true" showEffect="fade" hideEffect="fade">
+	<h:form id="formAddHabilidade">
+		<p:dialog header="Adicionar Habilidade" widgetVar="addHabilidade"
+			id="modalAddHabilidade" minHeight="100" modal="true">
 
-		<h:form>
-			<p:commandButton value="Salvar" />
-			<p:commandButton value="Cancelar" />
-		</h:form>
+			<p:messages autoUpdate="true" />
+			<h:panelGrid columns="2">
 
-		<h:form>
-			<!-- <p:panel id="panel" header="Formulario de cadastro"
-				style="margin-bottom:10px;">
-				<p:messages id="messages" />  -->
+				<h:outputLabel for="habilidade" value="Habilidade:" />
+				<p:inputText id="habilidade" required="true"
+					value="#{habilidadesController.habilidade.nomeHabilidade}"
+					requiredMessage="Por favor informe uma habilidade" 
+					maxlength="19"/>
+			</h:panelGrid>
+			<p:separator />
 
-				
-				<h:panelGrid columns="2" cellpadding="3">
-					<h:outputLabel for="atividade" value="Atividade:" />
-					<p:inputText id="atividade" required="true" />
-				</h:panelGrid>
-<!-- 
-    			  <p:pickList id="pickList" 
-    			              value="#{pickListView.cities}" 
-    			              var="cities" 
-    			              itemLabel="#{cities}" 
-    			              itemValue="#{cities}">
-    			  
-    			  	  <f:facet name="sourceCaption">Costureiras disponíveis</f:facet>
-      				  <f:facet name="targetCaption">Costureiras selecionadas</f:facet>            
-    			  </p:pickList> -->
- 
-
-			<!--  </p:panel>  -->
+			<h:panelGrid columns="2" style="margin-left:50px">
+				<p:commandButton value="Salvar"
+								 actionListener="#{habilidadesController.addHabilidade()}"
+								 update="tabelaHabilidade"
+								 oncomplete="PF('addHabilidade').hide()"/>
 			
-			
-			
-			
-			
-			<h:outputText value="Tempo das costureiras em segundos"/>
-			<p:separator></p:separator>
-			
-		
-
-			
-		</h:form>
-
-	</p:dialog>
+				<p:commandButton value="Cancelar" 
+								 onclick="PF('addHabilidade').hide()"
+							     immediate="true" />
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
 
 </ui:composition>
