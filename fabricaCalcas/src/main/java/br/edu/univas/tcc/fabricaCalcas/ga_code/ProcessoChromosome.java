@@ -44,11 +44,12 @@ public class ProcessoChromosome extends Chromosome{
 		}
 	}
 	
-	public void addCostureiraPredecessora(CostureiraHabilidade costureiraHabilidade,int qtdeLote){
+	public void addCostureiraPredecessora(CostureiraHabilidade costureiraHabilidade,int qtdeLote, long tempoDeTransporte,
+			long tempoProducao){
 		if(costureirasPredecessoras==null){
 			costureirasPredecessoras = new ArrayList<CostureiraPredecessora>();
 		}
-		costureirasPredecessoras.add(new CostureiraPredecessora(costureiraHabilidade,qtdeLote));
+		costureirasPredecessoras.add(new CostureiraPredecessora(costureiraHabilidade,qtdeLote,tempoDeTransporte,tempoProducao));
 		if(predecessorasMap == null){
 			predecessorasMap = new HashMap<String, Integer>();
 		}

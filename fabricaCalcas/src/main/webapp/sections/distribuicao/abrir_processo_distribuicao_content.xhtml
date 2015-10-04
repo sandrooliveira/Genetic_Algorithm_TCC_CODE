@@ -23,7 +23,10 @@
 	
 					<p:commandButton action="#{distribuicaoController.iniciarDistribuicao()}"
 									 value="Iniciar distribuição" 
-									 update="formAbrirProcessoDis"/>
+									 update="formAbrirProcessoDis"
+									 ajax="true"
+									 onstart="PF('waitDialog').show();"
+									 onsuccess="PF('waitDialog').hide();"/>
 					
 				</h:panelGrid>
 			</p:fieldset>
@@ -33,10 +36,11 @@
 		<p:separator />
 		<br />
 	
-		<p:fieldset legend="Resultado da distribuição">
+		<p:fieldset legend="Resultado da distribuição" rendered="#{distribuicaoController.mostrarResult}">
 			<h3>
 				<h:outputLabel
-					value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes}"
+					value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes} - Melhor tempo encontrado:
+				      #{distribuicaoController.tempoTotal} segundos"
 					styleClass="label" />
 			</h3>
 	
@@ -49,10 +53,10 @@
 		</p:fieldset>
 		
 		<br />
-		<p:separator />
+		<p:separator rendered="#{distribuicaoController.mostrarResult}" />
 		<br />
 
-		<p:fieldset legend="Detalhes da distribuição">
+		<p:fieldset legend="Detalhes da distribuição" rendered="#{distribuicaoController.mostrarResult}">
 			<p:treeTable value="#{distribuicaoController.rootTable}" var="tabDetailBean">
 				
 				<p:column headerText="Atividade/Costureira">
@@ -67,23 +71,37 @@
 					<h:outputText value="#{tabDetailBean.qtdeLote}" />
 				</p:column>
 	
-				<p:column headerText="Pecas por lote">
+				<p:column headerText="Peç lote">
 					<h:outputText value="#{tabDetailBean.pecasPorLote}" />
 				</p:column>
 				
-				<p:column headerText="Total de peças">
+				<p:column headerText="Tot peças">
 					<h:outputText value="#{tabDetailBean.totalPecas}" />
 				</p:column>
 				
-				<p:column headerText="Tempo por peca">
+				<p:column headerText="T. peca">
 					<h:outputText value="#{tabDetailBean.tempoPorPeca}" />
 				</p:column>
 				
-				<p:column headerText="Tempo total">
+				<p:column headerText="T.producao">
+					<h:outputText value="#{tabDetailBean.tempoProducao}" />
+				</p:column>
+				
+				<p:column headerText="T. transporte">
+					<h:outputText value="#{tabDetailBean.tempoTransporte}" />
+				</p:column>
+				
+				<p:column headerText="T. total">
 					<h:outputText value="#{tabDetailBean.tempoTotal}" />
 				</p:column>
 								
 			</p:treeTable>
 		</p:fieldset>
+		
+		<p:dialog header="Aguarde, o programa está buscando uma solução otimizada!"
+			widgetVar="waitDialog" id="waitDialotId" modal="true"
+			closable="false" resizable="false">
+			<h:graphicImage value="../css/images/ajax-loader.gif" style="margin-left:150px!important;" />
+		</p:dialog>
 	</h:form>
 </ui:composition>

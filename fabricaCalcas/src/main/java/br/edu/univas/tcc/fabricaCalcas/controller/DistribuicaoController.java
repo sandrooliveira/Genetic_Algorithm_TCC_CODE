@@ -38,8 +38,10 @@ public class DistribuicaoController {
 	private int numeroDeLotes;
 	private int idProcesso = 80; //TODO:recuperar pelo ID
 	private TreeNode rootFluxograma;	
-	private TreeNode rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-"));
+	private TreeNode rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-","-","-"));
 	private List<Node> allNodes = new ArrayList<Node>();
+	private boolean mostrarResult = false;
+	private float tempoTotal;
 	
 	@PostConstruct
 	public void init(){
@@ -65,13 +67,20 @@ public class DistribuicaoController {
 		if((numeroDeLotes * totalPecasPorLote) != totalPecas){
 			sendMessageToView("Número de lote não exato: "+numeroDeLotes+" * "+totalPecasPorLote+" = "+numeroDeLotes*totalPecasPorLote, 
 							   FacesMessage.SEVERITY_ERROR);
+			return;
 		}
 		
 		GeneticAlgorithmManagement gam = new GeneticAlgorithmManagement();
 		ProcessoIndividual pi = gam.iniciarDistribuicao(numeroDeLotes, totalPecasPorLote, idProcesso);
-		rootFluxograma = construirArvore(pi.getNode(), null);
 		
-		construirTableDetail(pi);
+		if(pi != null){
+			rootFluxograma = construirArvore(pi.getNode(), null);
+			allNodes = new ArrayList<Node>();
+			construirTableDetail(pi);
+			tempoTotal = pi.getValue();
+			mostrarResult = true;
+		}
+		
 	}
 	
 	public void construirTableDetail(ProcessoIndividual pi){
@@ -79,20 +88,23 @@ public class DistribuicaoController {
 		for(Node n : allNodes){
 			TreeNode atividade = new DefaultTreeNode(new TabDetailBean(n.getAtividade().getNomeAtividade(), 
 																	   n.getAtividade().getHabilidade().getNomeHabilidade(), 
-																	   "-", "-", "-"),rootTable);
+																	   "-", "-", "-","-","-"),rootTable);
 			for(Chromosome c : n.getCromossomos()){
 				ProcessoChromosome pc = (ProcessoChromosome) c;
 				TreeNode chromossome = new DefaultTreeNode(new TabDetailBean(pc.getCostureiraHabilidade().getCostureira().getNomeCostureira(),
 																			 pc.getCostureiraHabilidade().getHabilidade().getNomeHabilidade(),
 																			 pc.getLotesToShow(), pi.getPecasPorLote(), 
-																			 pc.getCostureiraHabilidade().getTempoPorPeca()),atividade);
+																			 pc.getCostureiraHabilidade().getTempoPorPeca(),
+																			 0,0,pc),atividade);
 				
 				if(pc.getCostureirasPredecessoras() != null){
 					for(CostureiraPredecessora cp : pc.getCostureirasPredecessoras()){
 						TreeNode nodeCp = new DefaultTreeNode(new TabDetailBean(cp.getCostureira().getCostureira().getNomeCostureira(),
 																				cp.getCostureira().getHabilidade().getNomeHabilidade(),
 																				cp.getQtdeLotes(), pi.getPecasPorLote(), 
-																				cp.getCostureira().getTempoPorPeca()),chromossome);
+																				cp.getCostureira().getTempoPorPeca(),
+																				cp.getTempoDeTransporte(),
+																				cp.getTempoDeProducao(),null),chromossome);
 					}
 				}
 			}
@@ -172,4 +184,21 @@ public class DistribuicaoController {
 	public void setRootTable(TreeNode rootTable) {
 		this.rootTable = rootTable;
 	}
+
+	public boolean isMostrarResult() {
+		return mostrarResult;
+	}
+
+	public void setMostrarResult(boolean mostrarResult) {
+		this.mostrarResult = mostrarResult;
+	}
+
+	public float getTempoTotal() {
+		return tempoTotal;
+	}
+
+	public void setTempoTotal(float tempoTotal) {
+		this.tempoTotal = tempoTotal;
+	}
+	
 }

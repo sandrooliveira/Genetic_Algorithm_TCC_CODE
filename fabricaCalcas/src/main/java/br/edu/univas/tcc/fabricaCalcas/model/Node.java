@@ -82,7 +82,7 @@ public class Node {
 			 * a costureira e o Marcelo (Distribuidor de tarefas)*/
 			if(node.getAtividade().getHabilidade().getNomeHabilidade().equals("Carimbo")){
 				ProcessoChromosome processoChromosomeCarimbo = (ProcessoChromosome) node.getCromossomos().get(0);
-				valor = calcularTempoEntreCostureiras(processoChromosome, processoChromosomeCarimbo);
+				valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
 			}else{
 				valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
 			}
@@ -98,15 +98,19 @@ public class Node {
 		int qtdeEachCromossome = 0;
 		long valor = 0;
 		long maior = 0;
+		long distance = 0;
 		for(Chromosome chromosome : cromossomos){
 			ProcessoChromosome processoChromosomeBefore = (ProcessoChromosome) chromosome;
 			qtdeEachCromossome = processoChromosomeBefore.getQtdeLotes(qtdeLote);
 			if(qtdeEachCromossome > 0){
-				processoChromosome.addCostureiraPredecessora(processoChromosomeBefore.getCostureiraHabilidade(), 
-					qtdeEachCromossome);
 				qtdeLote -= qtdeEachCromossome;
 				valor = getCromossomeValue(processoChromosomeBefore, qtdeEachCromossome);
-				valor += calcularTempoEntreCostureiras(processoChromosome,processoChromosomeBefore);
+				distance = calcularTempoEntreCostureiras(processoChromosome, processoChromosomeBefore);
+				
+				processoChromosome.addCostureiraPredecessora(processoChromosomeBefore.getCostureiraHabilidade(), 
+						qtdeEachCromossome,distance,valor);
+				
+				valor += distance;
 			}
 			if(valor > maior){
 				maior = valor;
