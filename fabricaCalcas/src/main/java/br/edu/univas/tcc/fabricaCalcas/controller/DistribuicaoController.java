@@ -76,6 +76,7 @@ public class DistribuicaoController {
 		if(pi != null){
 			rootFluxograma = construirArvore(pi.getNode(), null);
 			allNodes = new ArrayList<Node>();
+			rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-","-","-"));
 			construirTableDetail(pi);
 			tempoTotal = pi.getValue();
 			mostrarResult = true;
@@ -83,17 +84,16 @@ public class DistribuicaoController {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	public void construirTableDetail(ProcessoIndividual pi){
 		getAllNodes(pi.getNode());
 		for(Node n : allNodes){
 			TreeNode atividade = new DefaultTreeNode(new TabDetailBean(n.getAtividade().getNomeAtividade(), 
-																	   n.getAtividade().getHabilidade().getNomeHabilidade(), 
-																	   "-", "-", "-","-","-"),rootTable);
+																	  "-","-", "-", "-","-","-"),rootTable);
 			for(Chromosome c : n.getCromossomos()){
 				ProcessoChromosome pc = (ProcessoChromosome) c;
 				TreeNode chromossome = new DefaultTreeNode(new TabDetailBean(pc.getCostureiraHabilidade().getCostureira().getNomeCostureira(),
-																			 pc.getCostureiraHabilidade().getHabilidade().getNomeHabilidade(),
-																			 pc.getLotesToShow(), pi.getPecasPorLote(), 
+																			 "-", pc.getLotesToShow(), pi.getPecasPorLote(), 
 																			 pc.getCostureiraHabilidade().getTempoPorPeca(),
 																			 0,0,pc),atividade);
 				
@@ -101,8 +101,7 @@ public class DistribuicaoController {
 					for(CostureiraPredecessora cp : pc.getCostureirasPredecessoras()){
 						TreeNode nodeCp = new DefaultTreeNode(new TabDetailBean(cp.getCostureira().getCostureira().getNomeCostureira(),
 																				cp.getCostureira().getHabilidade().getNomeHabilidade(),
-																				cp.getQtdeLotes(), pi.getPecasPorLote(), 
-																				cp.getCostureira().getTempoPorPeca(),
+																				cp.getQtdeLotes(), "-", "-",
 																				cp.getTempoDeTransporte(),
 																				cp.getTempoDeProducao(),null),chromossome);
 					}

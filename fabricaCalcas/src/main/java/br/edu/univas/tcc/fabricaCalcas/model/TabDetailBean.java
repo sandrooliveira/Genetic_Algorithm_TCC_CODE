@@ -13,6 +13,7 @@ public class TabDetailBean {
 	private String tempoPorPeca;
 	private String tempoProducao;
 	private String tempoTransporte;
+	private String tempoDeRecebimento;
 	private String tempoTotal;
 	
 	public TabDetailBean(String atividadeCostureira, String parte, int qtdeLote, int pecasPorLote,
@@ -23,9 +24,27 @@ public class TabDetailBean {
 		this.qtdeLote = String.valueOf(qtdeLote);
 		this.pecasPorLote = String.valueOf(pecasPorLote);
 		this.tempoPorPeca = String.valueOf(tempoPorPeca);
-		this.tempoTransporte = String.valueOf(tempoTransporte);
 		this.tempoProducao = String.valueOf(tempoProducao);
+		this.tempoTransporte = "-";
 		calcularTotalDePecasETempoTotal(qtdeLote,pecasPorLote,tempoPorPeca,tempoTransporte,pc);
+	}
+	
+	
+	public TabDetailBean(String atividadeCostureira, String parte, int qtdeLote, 
+			String pecasPorLote,String tempoPorPeca, long tempoTransporte,long tempoProducao, ProcessoChromosome pc){
+		
+		this.atividadeCostureira = atividadeCostureira;
+		this.parte = parte;
+		this.qtdeLote = String.valueOf(qtdeLote);
+		this.pecasPorLote = pecasPorLote;
+		this.tempoPorPeca = tempoPorPeca;
+		this.tempoTransporte = String.valueOf(tempoTransporte);
+		this.tempoDeRecebimento = "-";
+		this.tempoProducao = String.valueOf(tempoProducao);
+		this.totalPecas = "-";
+		
+		long tempoTotal = Long.parseLong(this.tempoProducao) + tempoTransporte;
+		this.tempoTotal = String.valueOf(tempoTotal);
 	}
 	
 	public TabDetailBean(String atividadeCostureira, String parte, String qtdeLote, String pecasPorLote,
@@ -38,6 +57,8 @@ public class TabDetailBean {
 		this.tempoPorPeca = tempoPorPeca;
 		this.tempoTransporte = tempoTransporte;
 		this.tempoProducao = tempoProducao;
+		totalPecas = "-";
+		tempoDeRecebimento ="-";
 	}
 	
 	public void calcularTotalDePecasETempoTotal(int qtdeLote, int pecasPorLote,int tempoPorPeca,long tempoTransporte,
@@ -48,16 +69,15 @@ public class TabDetailBean {
 		int totalPecas = qtdeLote * pecasPorLote;
 		this.totalPecas = String.valueOf(totalPecas);
 		
-		if(pc == null){
-			tempoTotal = Long.parseLong(this.tempoProducao) + tempoTransporte;
-		}else{
-			tempoProducao = totalPecas * tempoPorPeca; 
-			this.tempoProducao = String.valueOf(tempoProducao); 
-			long maiortTempo = pegarMaiorTempo(pc);
-			tempoTotal = totalPecas * tempoPorPeca + maiortTempo;
-			this.tempoTransporte = String.valueOf(maiortTempo);
-		}
+		long maiortTempo = pegarMaiorTempo(pc);
+		
+		tempoProducao = totalPecas * tempoPorPeca; 
+		tempoTotal = tempoProducao + maiortTempo;
+		
+		this.tempoProducao = String.valueOf(tempoProducao); 
+		this.tempoDeRecebimento = String.valueOf(maiortTempo);
 		this.tempoTotal = String.valueOf(tempoTotal);
+		
 	}
 	
 	public long pegarMaiorTempo(ProcessoChromosome pc){
@@ -136,6 +156,15 @@ public class TabDetailBean {
 	public void setTempoTransporte(String tempoTransporte) {
 		this.tempoTransporte = tempoTransporte;
 	}
+	
+	public String getTempoDeRecebimento() {
+		return tempoDeRecebimento;
+	}
+
+	public void setTempoDeRecebimento(String tempoDeRecebimento) {
+		this.tempoDeRecebimento = tempoDeRecebimento;
+	}
+
 
 	public String getTempoTotal() {
 		return tempoTotal;

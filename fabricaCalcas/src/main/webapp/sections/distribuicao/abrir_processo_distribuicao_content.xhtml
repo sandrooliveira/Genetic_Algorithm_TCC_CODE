@@ -7,101 +7,110 @@
 
 	<h:form id="formAbrirProcessoDis">
 		<p:messages autoUpdate="true"></p:messages>
-		<div id="distribuicaoFields">
-			<p:fieldset legend="Forma de distribuição">
-				<h:panelGrid columns="5">
-					<h:outputLabel styleClass="label" for="nPecas" value="Número de peças:" />
-					<p:inputText id="nPecas" required="true"
-						value="#{distribuicaoController.totalPecas}"
-						requiredMessage="Por favor informe o total de peças" maxlength="19" />
-	
-					<h:outputLabel styleClass="label" for="totalPecaPorLote" value="Total de peça por lote:" />
-					<p:inputText id="totalPecaPorLote" required="true"
-						value="#{distribuicaoController.totalPecasPorLote}"
-						requiredMessage="Por favor informe o total de peças por lote"
-						maxlength="19" />
-	
-					<p:commandButton action="#{distribuicaoController.iniciarDistribuicao()}"
-									 value="Iniciar distribuição" 
-									 update="formAbrirProcessoDis"
-									 ajax="true"
-									 onstart="PF('waitDialog').show();"
-									 onsuccess="PF('waitDialog').hide();"/>
-					
-				</h:panelGrid>
+		
+		<p:panelGrid columns="1">
+		
+			<div id="distribuicaoFields">
+				<p:fieldset legend="Forma de distribuição">
+					<h:panelGrid columns="5">
+						<h:outputLabel styleClass="label" for="nPecas" value="Número de peças:" />
+						<p:inputText id="nPecas" required="true"
+							value="#{distribuicaoController.totalPecas}"
+							requiredMessage="Por favor informe o total de peças" maxlength="19" />
+		
+						<h:outputLabel styleClass="label" for="totalPecaPorLote" value="Total de peça por lote:" />
+						<p:inputText id="totalPecaPorLote" required="true"
+							value="#{distribuicaoController.totalPecasPorLote}"
+							requiredMessage="Por favor informe o total de peças por lote"
+							maxlength="19" />
+		
+						<p:commandButton action="#{distribuicaoController.iniciarDistribuicao()}"
+										 value="Iniciar distribuição" 
+										 update="formAbrirProcessoDis"
+										 ajax="true"
+										 onstart="PF('waitDialog').show();"
+										 onsuccess="PF('waitDialog').hide();"/>
+						
+					</h:panelGrid>
+				</p:fieldset>
+			</div>
+			
+			<br />
+			<p:separator />
+			<br />
+		
+			<p:fieldset legend="Resultado da distribuição" rendered="#{distribuicaoController.mostrarResult}">
+				<h3>
+					<h:outputLabel
+						value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes} - Melhor tempo encontrado:
+					      #{distribuicaoController.tempoTotal} segundos"
+						styleClass="label" />
+				</h3>
+		
+				<p:tree value="#{distribuicaoController.rootFluxograma}" var="node"
+					dynamic="true" orientation="horizontal" id="arvoreFluxograma">
+					<p:treeNode>
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+				</p:tree>
 			</p:fieldset>
-		</div>
-		
-		<br />
-		<p:separator />
-		<br />
+			
+			<br />
+			<p:separator rendered="#{distribuicaoController.mostrarResult}" />
+			<br />
 	
-		<p:fieldset legend="Resultado da distribuição" rendered="#{distribuicaoController.mostrarResult}">
-			<h3>
-				<h:outputLabel
-					value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes} - Melhor tempo encontrado:
-				      #{distribuicaoController.tempoTotal} segundos"
-					styleClass="label" />
-			</h3>
-	
-			<p:tree value="#{distribuicaoController.rootFluxograma}" var="node"
-				dynamic="true" orientation="horizontal" id="arvoreFluxograma">
-				<p:treeNode>
-					<h:outputText value="#{node}" />
-				</p:treeNode>
-			</p:tree>
-		</p:fieldset>
+			<p:fieldset legend="Detalhes da distribuição" rendered="#{distribuicaoController.mostrarResult}">
+				<p:treeTable value="#{distribuicaoController.rootTable}" var="tabDetailBean">
+					
+					<p:column headerText="Atividade/Costureira">
+						<h:outputText value="#{tabDetailBean.atividadeCostureira}" />
+					</p:column>
+					
+					<p:column headerText="Parte">
+						<h:outputText value="#{tabDetailBean.parte}" />
+					</p:column>
+					
+					<p:column headerText="Qtde Lotes">
+						<h:outputText value="#{tabDetailBean.qtdeLote}" />
+					</p:column>
 		
-		<br />
-		<p:separator rendered="#{distribuicaoController.mostrarResult}" />
-		<br />
-
-		<p:fieldset legend="Detalhes da distribuição" rendered="#{distribuicaoController.mostrarResult}">
-			<p:treeTable value="#{distribuicaoController.rootTable}" var="tabDetailBean">
-				
-				<p:column headerText="Atividade/Costureira">
-					<h:outputText value="#{tabDetailBean.atividadeCostureira}" />
-				</p:column>
-				
-				<p:column headerText="Parte">
-					<h:outputText value="#{tabDetailBean.parte}" />
-				</p:column>
-				
-				<p:column headerText="Qtde Lotes">
-					<h:outputText value="#{tabDetailBean.qtdeLote}" />
-				</p:column>
-	
-				<p:column headerText="Peç lote">
-					<h:outputText value="#{tabDetailBean.pecasPorLote}" />
-				</p:column>
-				
-				<p:column headerText="Tot peças">
-					<h:outputText value="#{tabDetailBean.totalPecas}" />
-				</p:column>
-				
-				<p:column headerText="T. peca">
-					<h:outputText value="#{tabDetailBean.tempoPorPeca}" />
-				</p:column>
-				
-				<p:column headerText="T.producao">
-					<h:outputText value="#{tabDetailBean.tempoProducao}" />
-				</p:column>
-				
-				<p:column headerText="T. transporte">
-					<h:outputText value="#{tabDetailBean.tempoTransporte}" />
-				</p:column>
-				
-				<p:column headerText="T. total">
-					<h:outputText value="#{tabDetailBean.tempoTotal}" />
-				</p:column>
-								
-			</p:treeTable>
-		</p:fieldset>
+					<p:column headerText="Peç lote">
+						<h:outputText value="#{tabDetailBean.pecasPorLote}" />
+					</p:column>
+					
+					<p:column headerText="Tot peças">
+						<h:outputText value="#{tabDetailBean.totalPecas}" />
+					</p:column>
+					
+					<p:column headerText="T. peca">
+						<h:outputText value="#{tabDetailBean.tempoPorPeca}" />
+					</p:column>
+					
+					<p:column headerText="T.producao">
+						<h:outputText value="#{tabDetailBean.tempoProducao}" />
+					</p:column>
+					
+					<p:column headerText="T. Envio">
+						<h:outputText value="#{tabDetailBean.tempoTransporte}" />
+					</p:column>
+					
+						<p:column headerText="T. Recebimento">
+						<h:outputText value="#{tabDetailBean.tempoDeRecebimento}" />
+					</p:column>
+					
+					<p:column headerText="T. total">
+						<h:outputText value="#{tabDetailBean.tempoTotal}" />
+					</p:column>
+									
+				</p:treeTable>
+			</p:fieldset>
+			
+			<p:dialog header="Aguarde, o programa está buscando uma solução otimizada!"
+				widgetVar="waitDialog" id="waitDialotId" modal="true"
+				closable="false" resizable="false">
+				<h:graphicImage value="../css/images/ajax-loader.gif" style="margin-left:150px!important;" />
+			</p:dialog>
 		
-		<p:dialog header="Aguarde, o programa está buscando uma solução otimizada!"
-			widgetVar="waitDialog" id="waitDialotId" modal="true"
-			closable="false" resizable="false">
-			<h:graphicImage value="../css/images/ajax-loader.gif" style="margin-left:150px!important;" />
-		</p:dialog>
+		</p:panelGrid>
 	</h:form>
 </ui:composition>
