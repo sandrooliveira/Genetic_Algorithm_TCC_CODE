@@ -8,26 +8,82 @@
 	<h:form id="formAbrirProcessoDis">
 		<p:messages autoUpdate="true"></p:messages>
 		<div id="distribuicaoFields">
-			<h:panelGrid columns="5">
-
-				<h:outputLabel styleClass="label" for="nPecas" value="Número de peças:" />
-				<p:inputText id="nPecas" required="true"
-					value="#{distribuicaoController.totalPecas}"
-					requiredMessage="Por favor informe o total de peças" maxlength="19" />
-
-				<h:outputLabel styleClass="label" for="totalPecaPorLote" value="Total de peça por lote:" />
-				<p:inputText id="totalPecaPorLote" required="true"
-					value="#{distribuicaoController.totalPecasPorLote}"
-					requiredMessage="Por favor informe o total de peças por lote"
-					maxlength="19" />
-
-				<p:commandButton action="#{distribuicaoController.iniciarDistribuicao()}"
-								 value="Iniciar distribuição" 
-								 update="formAbrirProcessoDis"/>
-				
-				<h:outputLabel value="Total de lotes: #{distribuicaoController.numeroDeLotes}"
-							   styleClass="label" />
-			</h:panelGrid>
+			<p:fieldset legend="Forma de distribuição">
+				<h:panelGrid columns="5">
+					<h:outputLabel styleClass="label" for="nPecas" value="Número de peças:" />
+					<p:inputText id="nPecas" required="true"
+						value="#{distribuicaoController.totalPecas}"
+						requiredMessage="Por favor informe o total de peças" maxlength="19" />
+	
+					<h:outputLabel styleClass="label" for="totalPecaPorLote" value="Total de peça por lote:" />
+					<p:inputText id="totalPecaPorLote" required="true"
+						value="#{distribuicaoController.totalPecasPorLote}"
+						requiredMessage="Por favor informe o total de peças por lote"
+						maxlength="19" />
+	
+					<p:commandButton action="#{distribuicaoController.iniciarDistribuicao()}"
+									 value="Iniciar distribuição" 
+									 update="formAbrirProcessoDis"/>
+					
+				</h:panelGrid>
+			</p:fieldset>
 		</div>
+		
+		<br />
+		<p:separator />
+		<br />
+	
+		<p:fieldset legend="Resultado da distribuição">
+			<h3>
+				<h:outputLabel
+					value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes}"
+					styleClass="label" />
+			</h3>
+	
+			<p:tree value="#{distribuicaoController.rootFluxograma}" var="node"
+				dynamic="true" orientation="horizontal" id="arvoreFluxograma">
+				<p:treeNode>
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+		</p:fieldset>
+		
+		<br />
+		<p:separator />
+		<br />
+
+		<p:fieldset legend="Detalhes da distribuição">
+			<p:treeTable value="#{distribuicaoController.rootTable}" var="tabDetailBean">
+				
+				<p:column headerText="Atividade/Costureira">
+					<h:outputText value="#{tabDetailBean.atividadeCostureira}" />
+				</p:column>
+				
+				<p:column headerText="Parte">
+					<h:outputText value="#{tabDetailBean.parte}" />
+				</p:column>
+				
+				<p:column headerText="Qtde Lotes">
+					<h:outputText value="#{tabDetailBean.qtdeLote}" />
+				</p:column>
+	
+				<p:column headerText="Pecas por lote">
+					<h:outputText value="#{tabDetailBean.pecasPorLote}" />
+				</p:column>
+				
+				<p:column headerText="Total de peças">
+					<h:outputText value="#{tabDetailBean.totalPecas}" />
+				</p:column>
+				
+				<p:column headerText="Tempo por peca">
+					<h:outputText value="#{tabDetailBean.tempoPorPeca}" />
+				</p:column>
+				
+				<p:column headerText="Tempo total">
+					<h:outputText value="#{tabDetailBean.tempoTotal}" />
+				</p:column>
+								
+			</p:treeTable>
+		</p:fieldset>
 	</h:form>
 </ui:composition>

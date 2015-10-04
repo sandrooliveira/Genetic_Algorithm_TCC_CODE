@@ -133,6 +133,19 @@ public class Node {
 		return distance * 100;
 	}
 	
+	@Override
+	public String toString() {
+		String sb = null;
+		sb = "<"+atividade+"> (" ;
+		for(Chromosome chromosome : cromossomos){
+			ProcessoChromosome pc = (ProcessoChromosome) chromosome;
+			sb += pc.getCostureiraHabilidade().getCostureira().getNomeCostureira()+":";
+			sb += pc.getLotesToShow()+" ";
+		}
+		sb += ")";
+		return sb;
+	}
+	
 	/*Getters and setters*/
 	public List<Node> getPredecesoras() {
 		return predecesoras;

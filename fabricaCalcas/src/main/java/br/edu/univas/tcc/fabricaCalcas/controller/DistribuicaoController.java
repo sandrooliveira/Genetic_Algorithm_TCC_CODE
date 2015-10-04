@@ -1,6 +1,7 @@
 package br.edu.univas.tcc.fabricaCalcas.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -10,11 +11,19 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
+
 import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;
 import br.edu.univas.tcc.fabricaCalcas.dao.ProcessoDAO;
+import br.edu.univas.tcc.fabricaCalcas.ga_code.CostureiraPredecessora;
 import br.edu.univas.tcc.fabricaCalcas.ga_code.GeneticAlgorithmManagement;
+import br.edu.univas.tcc.fabricaCalcas.ga_code.ProcessoChromosome;
 import br.edu.univas.tcc.fabricaCalcas.ga_code.ProcessoIndividual;
+import br.edu.univas.tcc.fabricaCalcas.model.Node;
 import br.edu.univas.tcc.fabricaCalcas.model.Processo;
+import br.edu.univas.tcc.fabricaCalcas.model.TabDetailBean;
+import br.edu.univas.tcc.ga_core.Chromosome;
 
 @ManagedBean(name = "distribuicaoController")
 @ViewScoped
@@ -28,6 +37,9 @@ public class DistribuicaoController {
 	private int totalPecasPorLote;
 	private int numeroDeLotes;
 	private int idProcesso = 80; //TODO:recuperar pelo ID
+	private TreeNode rootFluxograma;	
+	private TreeNode rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-"));
+	private List<Node> allNodes = new ArrayList<Node>();
 	
 	@PostConstruct
 	public void init(){
@@ -57,7 +69,52 @@ public class DistribuicaoController {
 		
 		GeneticAlgorithmManagement gam = new GeneticAlgorithmManagement();
 		ProcessoIndividual pi = gam.iniciarDistribuicao(numeroDeLotes, totalPecasPorLote, idProcesso);
-		pi.getNode().printNodes();
+		rootFluxograma = construirArvore(pi.getNode(), null);
+		
+		construirTableDetail(pi);
+	}
+	
+	public void construirTableDetail(ProcessoIndividual pi){
+		getAllNodes(pi.getNode());
+		for(Node n : allNodes){
+			TreeNode atividade = new DefaultTreeNode(new TabDetailBean(n.getAtividade().getNomeAtividade(), 
+																	   n.getAtividade().getHabilidade().getNomeHabilidade(), 
+																	   "-", "-", "-"),rootTable);
+			for(Chromosome c : n.getCromossomos()){
+				ProcessoChromosome pc = (ProcessoChromosome) c;
+				TreeNode chromossome = new DefaultTreeNode(new TabDetailBean(pc.getCostureiraHabilidade().getCostureira().getNomeCostureira(),
+																			 pc.getCostureiraHabilidade().getHabilidade().getNomeHabilidade(),
+																			 pc.getLotesToShow(), pi.getPecasPorLote(), 
+																			 pc.getCostureiraHabilidade().getTempoPorPeca()),atividade);
+				
+				if(pc.getCostureirasPredecessoras() != null){
+					for(CostureiraPredecessora cp : pc.getCostureirasPredecessoras()){
+						TreeNode nodeCp = new DefaultTreeNode(new TabDetailBean(cp.getCostureira().getCostureira().getNomeCostureira(),
+																				cp.getCostureira().getHabilidade().getNomeHabilidade(),
+																				cp.getQtdeLotes(), pi.getPecasPorLote(), 
+																				cp.getCostureira().getTempoPorPeca()),chromossome);
+					}
+				}
+			}
+		}
+	}
+	
+	public void getAllNodes(Node node){
+		allNodes.add(node);
+		for(Node n : node.getPredecesoras()){
+			getAllNodes(n);
+		}
+	}
+	
+	
+	/*Fluxograma handling*/
+	public TreeNode construirArvore(Node ttParent, TreeNode parent) {
+		TreeNode newNode = new DefaultTreeNode(ttParent, parent);
+		newNode.setExpanded(true);
+		for (Node tt : ttParent.getPredecesoras()) {
+			construirArvore(tt, newNode);
+		}	
+		return newNode;
 	}
 	
 	/*Messages Handling*/
@@ -98,5 +155,21 @@ public class DistribuicaoController {
 
 	public void setNumeroDeLotes(int numeroDeLotes) {
 		this.numeroDeLotes = numeroDeLotes;
+	}
+
+	public TreeNode getRootFluxograma() {
+		return rootFluxograma;
+	}
+
+	public void setRootFluxograma(TreeNode rootFluxograma) {
+		this.rootFluxograma = rootFluxograma;
+	}
+
+	public TreeNode getRootTable() {
+		return rootTable;
+	}
+
+	public void setRootTable(TreeNode rootTable) {
+		this.rootTable = rootTable;
 	}
 }
