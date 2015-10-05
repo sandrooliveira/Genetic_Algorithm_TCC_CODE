@@ -16,6 +16,7 @@ public class TabDetailBean {
 	private String tempoDeRecebimento;
 	private String tempoTotal;
 	
+	/*Este construtor é chamado para criar as costureiras da atividade*/
 	public TabDetailBean(String atividadeCostureira, String parte, int qtdeLote, int pecasPorLote,
 			int tempoPorPeca,long tempoTransporte,long tempoProducao, ProcessoChromosome pc){
 		
@@ -29,13 +30,19 @@ public class TabDetailBean {
 		calcularTotalDePecasETempoTotal(qtdeLote,pecasPorLote,tempoPorPeca,tempoTransporte,pc);
 	}
 	
-	
+	/*Este construtor é chamado para criar as costureiras predecessoras de uma outra costureira*/
 	public TabDetailBean(String atividadeCostureira, String parte, int qtdeLote, 
 			String pecasPorLote,String tempoPorPeca, long tempoTransporte,long tempoProducao, ProcessoChromosome pc){
 		
+		/*Para a atividade carimbo o número de lotes é indiferente*/
+		if(parte.equals("Carimbo")){
+			this.qtdeLote = "-";
+		}else{
+			this.qtdeLote = String.valueOf(qtdeLote);
+		}
+		
 		this.atividadeCostureira = atividadeCostureira;
 		this.parte = parte;
-		this.qtdeLote = String.valueOf(qtdeLote);
 		this.pecasPorLote = pecasPorLote;
 		this.tempoPorPeca = tempoPorPeca;
 		this.tempoTransporte = String.valueOf(tempoTransporte);
@@ -47,6 +54,7 @@ public class TabDetailBean {
 		this.tempoTotal = String.valueOf(tempoTotal);
 	}
 	
+	/*Este construtor é chamado somente para criar a atividade na tabela*/
 	public TabDetailBean(String atividadeCostureira, String parte, String qtdeLote, String pecasPorLote,
 			String tempoPorPeca, String tempoTransporte, String tempoProducao){
 		

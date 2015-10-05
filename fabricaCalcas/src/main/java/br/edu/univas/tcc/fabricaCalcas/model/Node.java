@@ -78,14 +78,7 @@ public class Node {
 		long valor = 0;
 		long maior = 0;
 		for(Node node : predecesoras){
-			/*Se a atividade anterior for Carimbo, então só é calculado a distância entre
-			 * a costureira e o Marcelo (Distribuidor de tarefas)*/
-			if(node.getAtividade().getHabilidade().getNomeHabilidade().equals("Carimbo")){
-				ProcessoChromosome processoChromosomeCarimbo = (ProcessoChromosome) node.getCromossomos().get(0);
-				valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
-			}else{
-				valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
-			}
+			valor = node.getValueChromosomosPredecessores(processoChromosome, qtdeLote);
 			
 			if(valor > maior){
 				maior = valor;

@@ -34,9 +34,7 @@ public class Costureira implements java.io.Serializable {
 	private int positionY;
 	private Set<CostureiraHabilidade> costureiraHabilidades = new HashSet<CostureiraHabilidade>(0);
 	
-	
 	private float disponibilidadeProvisoria;
-
 
 	public Costureira() {
 	}

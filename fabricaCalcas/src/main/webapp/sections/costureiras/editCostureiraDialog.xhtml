@@ -5,26 +5,26 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-	<h:form id="formAddCostureira">
-		<p:dialog header="Adicionar Costureira" widgetVar="addCostureira"
-			id="modalAddCostureira" minHeight="100" modal="true">
+	<h:form id="formEditCostureira">
+		<p:dialog header="Adicionar Costureira" widgetVar="editCostureira"
+			id="modalEditCostureira" minHeight="100" modal="true">
 
 			<p:messages autoUpdate="true" />
 			<h:panelGrid columns="2">
 
-				<h:outputLabel for="cosName" value="Nome" />
-				<p:inputText id="cosName" required="true"
-					value="#{costureirasController.costureira.nomeCostureira}"
+				<h:outputLabel for="editCosName" value="Nome" />
+				<p:inputText id="editCosName" required="true"
+					value="#{costureirasController.costureiraToEdit.nomeCostureira}"
 					requiredMessage="Por favor informe um nome" maxlength="19" />
 
-				<h:outputLabel for="posX" value="Posição X:" />
-				<p:inputText id="posX" required="true"
-					value="#{costureirasController.costureira.positionX}"
+				<h:outputLabel for="editPosX" value="Posição X:" />
+				<p:inputText id="editPosX" required="true"
+					value="#{costureirasController.costureiraToEdit.positionX}"
 					requiredMessage="Por favor informe uma posição X" maxlength="19" />
 
-				<h:outputLabel for="posY" value="Posição Y:" />
-				<p:inputText id="posY" required="true"
-					value="#{costureirasController.costureira.positionY}"
+				<h:outputLabel for="editPosY" value="Posição Y:" />
+				<p:inputText id="editPosY" required="true"
+					value="#{costureirasController.costureiraToEdit.positionY}"
 					requiredMessage="Por favor informe uma posição Y" maxlength="19" />
 					
 			</h:panelGrid>
@@ -33,10 +33,10 @@
 
 			<h:panelGrid columns="2" style="margin-left:50px">
 				<p:commandButton value="Salvar"
-					actionListener="#{costureirasController.addCostureira()}"
+					actionListener="#{costureirasController.updateCostureira()}"
 					update="formCostureiras:tabCostureiras" />
 
-				<p:commandButton value="Cancelar" onclick="PF('addProcesso').hide()"
+				<p:commandButton value="Cancelar" onclick="PF('editCostureira').hide()"
 					immediate="true" />
 			</h:panelGrid>
 		</p:dialog>

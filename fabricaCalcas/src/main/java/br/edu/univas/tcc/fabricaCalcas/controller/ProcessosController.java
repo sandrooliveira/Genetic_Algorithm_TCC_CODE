@@ -18,6 +18,7 @@ import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;
 import br.edu.univas.tcc.fabricaCalcas.dao.HabilidadeDAO;
 import br.edu.univas.tcc.fabricaCalcas.dao.ProcessoDAO;
 import br.edu.univas.tcc.fabricaCalcas.model.Atividade;
+import br.edu.univas.tcc.fabricaCalcas.model.AtividadeOrdem;
 import br.edu.univas.tcc.fabricaCalcas.model.Habilidade;
 import br.edu.univas.tcc.fabricaCalcas.model.Processo;
 
@@ -52,30 +53,63 @@ public class ProcessosController {
 	public void addProcesso() {
 
 		if (processo.getCliente() != null) {
-			processDao.addProcesso(processo);
+			Habilidade finalizacao = getHabilidadeByName("Finalização");
+			Habilidade carimbo = getHabilidadeByName("Carimbo");
+			
+			if(finalizacao != null && carimbo != null){
+				
+				processDao.addProcesso(processo);
+				processos.add(processo);
+				
+				Atividade atFinalizacao = new Atividade();
+				atFinalizacao.setAtividadeFinal(true);
+				atFinalizacao.setHabilidade(finalizacao);
+				atFinalizacao.setNomeAtividade("AT_Finalização");
+				atFinalizacao.setProcesso(processo);
+				
+				Atividade atCarimbo = new Atividade();
+				atCarimbo.setAtividadeFinal(false);
+				atCarimbo.setHabilidade(carimbo);
+				atCarimbo.setNomeAtividade("AT_Carimbo");
+				atCarimbo.setProcesso(processo);
+				atDao.addNovaAtividade(atFinalizacao);
+				atDao.addNovaAtividade(atCarimbo);
+				
+				AtividadeOrdem ao = new AtividadeOrdem();
+				ao.setAtividade(atFinalizacao);
+				ao.setAtividadePredecessora(atCarimbo);
+				atDao.addAtividadeOrdem(ao);
+				
+				FacesContext.getCurrentInstance().addMessage(null,new FacesMessage(FacesMessage.SEVERITY_INFO,
+															 "Processo salvo com sucesso!", null));
 
-			FacesContext.getCurrentInstance().addMessage(
-					null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO,
-							"Processo salvo com sucesso!", null));
-			processos.add(processo);
-
-			RequestContext request = RequestContext.getCurrentInstance();
-			request.execute("PF('addProcesso').hide()");
-			request.update("formAddProcesso");
-			Collections.sort(processos, new Processo());
-			processo = new Processo();
+				RequestContext request = RequestContext.getCurrentInstance();
+				request.execute("PF('addProcesso').hide()");
+				request.update("formAddProcesso");
+				Collections.sort(processos, new Processo());
+				processo = new Processo();
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						 "Insira as habilidades Finalização e Carimbo no banco!", null));
+			}
 		}
 	}
 	
+	//TODO:Remover este workaround
+	public Habilidade getHabilidadeByName(String name){
+		for(Habilidade h : habilidades){
+			if(h.getNomeHabilidade().equals(name)){
+				return h;
+			}
+		}
+		return null;
+	}
 
 	public void excluirProcesso() {
 	    processDao.excluirProcesso(processoToDelete);	
 	    processos.remove(processoToDelete);
-	    FacesContext.getCurrentInstance().addMessage(
-				null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Processo removido com sucesso!", null));
+	    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+													 "Processo removido com sucesso!", null));
 	}
 
 	public void loadProcessoToEdit(Processo processo) {
@@ -88,10 +122,8 @@ public class ProcessosController {
 
 	public void updateProcesso() {
 		processDao.updateProcesso(processoToEdit);
-		FacesContext.getCurrentInstance().addMessage(
-				null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Processo atualizado com sucesso!", null));
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+												     "Processo atualizado com sucesso!", null));
 
 		RequestContext request = RequestContext.getCurrentInstance();
 		request.execute("PF('editProcesso').hide()");

@@ -23,6 +23,7 @@ import br.edu.univas.tcc.fabricaCalcas.ga_code.ProcessoIndividual;
 import br.edu.univas.tcc.fabricaCalcas.model.Node;
 import br.edu.univas.tcc.fabricaCalcas.model.Processo;
 import br.edu.univas.tcc.fabricaCalcas.model.TabDetailBean;
+import br.edu.univas.tcc.fabricaCalcas.util.HttpRequestUtil;
 import br.edu.univas.tcc.ga_core.Chromosome;
 
 @ManagedBean(name = "distribuicaoController")
@@ -36,7 +37,7 @@ public class DistribuicaoController {
 	private int totalPecas;
 	private int totalPecasPorLote;
 	private int numeroDeLotes;
-	private int idProcesso = 80; //TODO:recuperar pelo ID
+	private int idProcesso;
 	private TreeNode rootFluxograma;	
 	private TreeNode rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-","-","-"));
 	private List<Node> allNodes = new ArrayList<Node>();
@@ -47,6 +48,7 @@ public class DistribuicaoController {
 	public void init(){
 		processDao = new ProcessoDAO(ConFactory.getConn());
 		processos = processDao.listAllProcessos();
+		getProjetoIdFromUrl();
 	}
 
 	public String abrirProcessoToDistribuicao(Integer idProcesso) throws IOException{
@@ -70,6 +72,11 @@ public class DistribuicaoController {
 			return;
 		}
 		
+		if(idProcesso <= 0){
+			sendMessageToView("Processo inválido", FacesMessage.SEVERITY_ERROR);
+			return;
+		}
+		
 		GeneticAlgorithmManagement gam = new GeneticAlgorithmManagement();
 		ProcessoIndividual pi = gam.iniciarDistribuicao(numeroDeLotes, totalPecasPorLote, idProcesso);
 		
@@ -88,22 +95,24 @@ public class DistribuicaoController {
 	public void construirTableDetail(ProcessoIndividual pi){
 		getAllNodes(pi.getNode());
 		for(Node n : allNodes){
-			TreeNode atividade = new DefaultTreeNode(new TabDetailBean(n.getAtividade().getNomeAtividade(), 
-																	  "-","-", "-", "-","-","-"),rootTable);
-			for(Chromosome c : n.getCromossomos()){
-				ProcessoChromosome pc = (ProcessoChromosome) c;
-				TreeNode chromossome = new DefaultTreeNode(new TabDetailBean(pc.getCostureiraHabilidade().getCostureira().getNomeCostureira(),
-																			 "-", pc.getLotesToShow(), pi.getPecasPorLote(), 
-																			 pc.getCostureiraHabilidade().getTempoPorPeca(),
-																			 0,0,pc),atividade);
-				
-				if(pc.getCostureirasPredecessoras() != null){
-					for(CostureiraPredecessora cp : pc.getCostureirasPredecessoras()){
-						TreeNode nodeCp = new DefaultTreeNode(new TabDetailBean(cp.getCostureira().getCostureira().getNomeCostureira(),
-																				cp.getCostureira().getHabilidade().getNomeHabilidade(),
-																				cp.getQtdeLotes(), "-", "-",
-																				cp.getTempoDeTransporte(),
-																				cp.getTempoDeProducao(),null),chromossome);
+			if(!n.getAtividade().getHabilidade().getNomeHabilidade().equals("Carimbo")){
+				TreeNode atividade = new DefaultTreeNode(new TabDetailBean(n.getAtividade().getNomeAtividade(), 
+																		  "-","-", "-", "-","-","-"),rootTable);
+				for(Chromosome c : n.getCromossomos()){
+					ProcessoChromosome pc = (ProcessoChromosome) c;
+					TreeNode chromossome = new DefaultTreeNode(new TabDetailBean(pc.getCostureiraHabilidade().getCostureira().getNomeCostureira(),
+																				 "-", pc.getLotesToShow(), pi.getPecasPorLote(), 
+																				 pc.getCostureiraHabilidade().getTempoPorPeca(),
+																				 0,0,pc),atividade);
+					
+					if(pc.getCostureirasPredecessoras() != null){
+						for(CostureiraPredecessora cp : pc.getCostureirasPredecessoras()){
+							TreeNode nodeCp = new DefaultTreeNode(new TabDetailBean(cp.getCostureira().getCostureira().getNomeCostureira(),
+																					cp.getCostureira().getHabilidade().getNomeHabilidade(),
+																					cp.getQtdeLotes(), "-", "-",
+																					cp.getTempoDeTransporte(),
+																					cp.getTempoDeProducao(),null),chromossome);
+						}
 					}
 				}
 			}
@@ -131,8 +140,22 @@ public class DistribuicaoController {
 	/*Messages Handling*/
 	public void sendMessageToView(String message,Severity severity) {
 		FacesContext contexto = FacesContext.getCurrentInstance();
-		contexto.addMessage(null, 
-							new FacesMessage(severity, message, null));
+		contexto.addMessage(null, new FacesMessage(severity, message, null));
+	}
+
+	public void getProjetoIdFromUrl() {
+		Object idProcesso = HttpRequestUtil.getParameterValueInRequest("idProcesso");
+		
+		try {
+			if (idProcesso != null) {
+				this.idProcesso = Integer.parseInt(String.valueOf(idProcesso));
+			} else {
+				this.idProcesso = 0;
+			}
+
+		} catch (NumberFormatException e) {
+			this.idProcesso = 0;
+		}
 	}
 	
 	/*Getters and setters*/

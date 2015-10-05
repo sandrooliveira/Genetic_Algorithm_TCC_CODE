@@ -23,6 +23,7 @@ import br.edu.univas.tcc.fabricaCalcas.model.Atividade;
 import br.edu.univas.tcc.fabricaCalcas.model.AtividadeOrdem;
 import br.edu.univas.tcc.fabricaCalcas.model.Habilidade;
 import br.edu.univas.tcc.fabricaCalcas.model.Processo;
+import br.edu.univas.tcc.fabricaCalcas.util.HttpRequestUtil;
 
 @ManagedBean(name = "processosAtividadesController")
 @ViewScoped
@@ -57,6 +58,8 @@ public class ProcessosAtividadesController {
 
 		EntityManager manager = ConFactory.getConn();
 		
+		getProjetoIdFromUrl();
+		
 		/*Instancia todos os DAOs a serem utilizados*/
 		habilidadeDao = new HabilidadeDAO(manager);
 		atividadeDao = new AtividadeDAO(manager);
@@ -78,13 +81,13 @@ public class ProcessosAtividadesController {
 		/*Recupera todas as habilidades disponíveis*/
 		habilidades = habilidadeDao.listAllHabilidades();
 		
-		removerHabilidadesJaAdicionadas();
-		
 		atividade = new Atividade();
 
 		/*Construir árvore*/
 		if (atividadeFinal != null) {
+			removerHabilidadesJaAdicionadas();
 			root = construirArvore(atividadeFinal, null);
+			
 		} else {
 			sendMessageToView("Não há atividade final definida!", FacesMessage.SEVERITY_ERROR);
 		}
@@ -353,6 +356,21 @@ public class ProcessosAtividadesController {
 			}
 		}
 		habilidades.remove(atividadeFinal.getHabilidade());
+	}
+	
+	public void getProjetoIdFromUrl() {
+		Object idProcesso = HttpRequestUtil.getParameterValueInRequest("idProcesso");
+		
+		try {
+			if (idProcesso != null) {
+				this.idProcessoRequest = Integer.parseInt(String.valueOf(idProcesso));
+			} else {
+				this.idProcessoRequest = 0;
+			}
+
+		} catch (NumberFormatException e) {
+			this.idProcessoRequest = 0;
+		}
 	}
 
 	

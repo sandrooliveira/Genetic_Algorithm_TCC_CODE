@@ -18,14 +18,17 @@ public class ProcessoIndividual extends Individual {
 	private int numeroLote;
 	private int pecasPorLote;
 
-	public ProcessoIndividual(Atividade atividadeInicial,Map<Integer, List<CostureiraHabilidade>> atividadesCostureiras,
+	public ProcessoIndividual(Atividade atividadeFinal,Map<Integer, List<CostureiraHabilidade>> atividadesCostureiras,
 			int numeroLote, int pecasPorLote){
 		
 		chromosomes = new ArrayList<Chromosome>();
+		Map<Integer, ProcessoChromosome> chromossomosMap = new HashMap<Integer, ProcessoChromosome>();
 		
-		this.atividadeFinal = atividadeInicial;
+		this.atividadeFinal = atividadeFinal;
 		this.numeroLote = numeroLote;
 		this.pecasPorLote = pecasPorLote;
+		
+		boolean distribuiuPorTodasCostureiras = false;
 
 		int qtdeLote = 0;
 		int cont = 0;
@@ -33,16 +36,42 @@ public class ProcessoIndividual extends Individual {
 		for (Integer key : atividadesCostureiras.keySet()) {
 			qtdeLote = numeroLote;
 			cont = 0;
+			int loteCostureira = 0;
+			
+			distribuiuPorTodasCostureiras = false;
 
-			for (CostureiraHabilidade costureiraHabilidade : atividadesCostureiras.get(key)) {
-				int loteCostureira = (int) (Math.random() * qtdeLote);
-				
-				if (cont != atividadesCostureiras.get(key).size() - 1) {
-					chromosomes.add(new ProcessoChromosome(key,costureiraHabilidade, loteCostureira));
-				} else {
-					chromosomes.add(new ProcessoChromosome(key,costureiraHabilidade, qtdeLote));
+			while (true){
+				if(qtdeLote == 1){
+					loteCostureira  = Math.round((float) Math.random() * 1);
+				}else{
+					loteCostureira = (int) (Math.random() * qtdeLote);
 				}
+				
+				
+				CostureiraHabilidade costureiraHabilidade = atividadesCostureiras.get(key).get(cont);
+				
+				ProcessoChromosome intermediario = chromossomosMap.get(costureiraHabilidade.getIdCostureiraHabilidade());
+				if(intermediario == null){
+					ProcessoChromosome pc = new ProcessoChromosome(key, costureiraHabilidade,loteCostureira); 
+					chromossomosMap.put(costureiraHabilidade.getIdCostureiraHabilidade(), pc);
+					chromosomes.add(pc);
+				}else{
+					int oldValue = intermediario.getQuantidade_lotes();
+					int newValue = oldValue + loteCostureira;
+					intermediario.setQuantidade_lotes(newValue);
+					intermediario.setLotesToShow(newValue);
+				}
+				
+				if (cont == atividadesCostureiras.get(key).size() - 1) {
+					cont = -1;
+					distribuiuPorTodasCostureiras = true;
+				} 
+				
 				qtdeLote -= loteCostureira;
+				
+				if(qtdeLote == 0 && distribuiuPorTodasCostureiras){
+					break;
+				}
 				cont++;
 			}
 		}

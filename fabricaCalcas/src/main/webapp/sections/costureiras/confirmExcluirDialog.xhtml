@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formExcluirCostureira">
+		<p:confirmDialog header="Excluir costureira"
+						 message="Tem certeza que deseja excluir esta costureira?"
+						 widgetVar="modalExluirCostureira">
+				
+				<p:commandButton value="Sim"
+								 action="#{costureirasController.excluirCostureira()}" 
+								 oncomplete="PF('modalExluirCostureira').hide()"
+								 update="formCostureiras:tabCostureiras"/>
+		
+				<p:commandButton value="Não"
+								 onclick="PF('modalExluirCostureira').hide()" />
+		</p:confirmDialog>
+	</h:form>
+</ui:composition>

@@ -40,19 +40,19 @@
 			<br />
 		
 			<p:fieldset legend="Resultado da distribuição" rendered="#{distribuicaoController.mostrarResult}">
-				<h3>
-					<h:outputLabel
-						value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes} - Melhor tempo encontrado:
-					      #{distribuicaoController.tempoTotal} segundos"
-						styleClass="label" />
-				</h3>
-		
-				<p:tree value="#{distribuicaoController.rootFluxograma}" var="node"
-					dynamic="true" orientation="horizontal" id="arvoreFluxograma">
-					<p:treeNode>
-						<h:outputText value="#{node}" />
-					</p:treeNode>
-				</p:tree>
+					<h3>
+						<h:outputLabel
+							value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes} - Melhor tempo encontrado:
+						      #{distribuicaoController.tempoTotal} segundos"
+							styleClass="label" />
+					</h3>
+			
+					<p:tree value="#{distribuicaoController.rootFluxograma}" var="node"
+						dynamic="true" orientation="horizontal" id="arvoreFluxograma">
+						<p:treeNode>
+							<h:outputText value="#{node}" />
+						</p:treeNode>
+					</p:tree>
 			</p:fieldset>
 			
 			<br />

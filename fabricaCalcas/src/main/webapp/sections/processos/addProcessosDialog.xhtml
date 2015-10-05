@@ -15,14 +15,12 @@
 				<h:outputLabel for="cliente" value="Cliente:" />
 				<p:inputText id="cliente" required="true"
 					value="#{processosController.processo.cliente}"
-					requiredMessage="Por favor informe um cliente" 
-					maxlength="19"/>
+					requiredMessage="Por favor informe um cliente" maxlength="19" />
 
 				<h:outputLabel for="modelo" value="Modelo:" />
 				<p:inputText id="modelo" required="true"
 					value="#{processosController.processo.nomeProcesso}"
-					requiredMessage="Por favor informe um modelo" 
-					maxlength="19"/>
+					requiredMessage="Por favor informe um modelo" maxlength="19" />
 
 
 				<h:outputLabel for="entrega" value="Entrega:" />
@@ -35,12 +33,11 @@
 
 			<h:panelGrid columns="2" style="margin-left:50px">
 				<p:commandButton value="Salvar"
-								 actionListener="#{processosController.addProcesso()}"
-								 update="formProcessos:tabelaProcessos"/>
-			
-				<p:commandButton value="Cancelar" 
-								 onclick="PF('addProcesso').hide()"
-							     immediate="true" />
+					actionListener="#{processosController.addProcesso()}"
+					update="formProcessos:tabelaProcessos" />
+
+				<p:commandButton value="Cancelar" onclick="PF('addProcesso').hide()"
+					immediate="true" />
 			</h:panelGrid>
 		</p:dialog>
 	</h:form>

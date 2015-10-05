@@ -15,6 +15,7 @@ public class ProcessoChromosome extends Chromosome{
 	public Map<String,Integer> predecessorasMap;
 	private int quantidade_lotes;
 	private int lotesToShow;
+	private boolean carimboJaAdicionado;
 
 	public ProcessoChromosome(Integer atividade, CostureiraHabilidade costureiraHabilidade) {
 		this.atividade = atividade;
@@ -33,14 +34,18 @@ public class ProcessoChromosome extends Chromosome{
 	//decrementar este valor e devolver quantos foi retirado para poder 
 	//ser fazer o cálculo.
 	public int getQtdeLotes(int qtdeLoteNeeded){
-		int oldValue = 0;
-		if((this.quantidade_lotes - qtdeLoteNeeded) < 0){
-			oldValue = this.quantidade_lotes;
-			this.quantidade_lotes = 0;
-			return oldValue;
-		}else{
-			this.quantidade_lotes -= qtdeLoteNeeded;
+		if(costureiraHabilidade.getHabilidade().getNomeHabilidade().equals("Carimbo")){
 			return qtdeLoteNeeded;
+		}else{
+			int oldValue = 0;
+			if((this.quantidade_lotes - qtdeLoteNeeded) < 0){
+				oldValue = this.quantidade_lotes;
+				this.quantidade_lotes = 0;
+				return oldValue;
+			}else{
+				this.quantidade_lotes -= qtdeLoteNeeded;
+				return qtdeLoteNeeded;
+			}
 		}
 	}
 	
@@ -49,10 +54,22 @@ public class ProcessoChromosome extends Chromosome{
 		if(costureirasPredecessoras==null){
 			costureirasPredecessoras = new ArrayList<CostureiraPredecessora>();
 		}
-		costureirasPredecessoras.add(new CostureiraPredecessora(costureiraHabilidade,qtdeLote,tempoDeTransporte,tempoProducao));
+		
+		if(costureiraHabilidade.getHabilidade().getNomeHabilidade().equals("Carimbo") && !carimboJaAdicionado){
+			costureirasPredecessoras.add(new CostureiraPredecessora(costureiraHabilidade,qtdeLote,tempoDeTransporte,tempoProducao));
+			carimboJaAdicionado = true;
+		}
+		
+		if(!costureiraHabilidade.getHabilidade().getNomeHabilidade().equals("Carimbo")){
+			costureirasPredecessoras.add(new CostureiraPredecessora(costureiraHabilidade,qtdeLote,tempoDeTransporte,tempoProducao));
+		}
+		
+		
 		if(predecessorasMap == null){
 			predecessorasMap = new HashMap<String, Integer>();
 		}
+		
+		/*O código abaixo é somente para criar uma estrutura para printar alguns testes na classe Node*/
 		String key = costureiraHabilidade.getHabilidade().getNomeHabilidade();
 		key+="_"+costureiraHabilidade.getCostureira().getNomeCostureira();
 		

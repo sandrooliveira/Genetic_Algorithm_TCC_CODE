@@ -5,27 +5,48 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 	
-	<p:commandButton value="Adicionar" type="button" onclick="PF('addCostureira').show();" />
-
-	<p:separator></p:separator>
+	<h:form id="formCostureiras">
 	
-	<p:dataTable var="costureira" value="#{costureirasController.costureiras}">
+		<p:messages autoUpdate="true" />
+	
+		<p:commandButton value="Adicionar" type="button" onclick="PF('addCostureira').show();" />
+	
+		<p:separator></p:separator>
 		
-		<p:column headerText="Id">
-			<h:outputText value="#{costureira.idCostureira}" />
-		</p:column>
-
-		<p:column headerText="Nome">
-			<h:outputText value="#{costureira.nomeCostureira}" />
-		</p:column>
-		
-		<p:column headerText="Opções" id="opcoes">
-			<p:commandButton  id="withIcon" icon="ui-icon-pencil" />
-			<p:commandButton  id="withIco" icon="ui-icon-closethick" />	
-		</p:column>
-
-	</p:dataTable>
+		<p:dataTable var="costureira" id="tabCostureiras" value="#{costureirasController.costureiras}"
+					 paginator="true" paginatorPosition="bottom" rows="8" style="text-align:center">
+			
+			<p:column headerText="Nome">
+				<h:outputText value="#{costureira.nomeCostureira}" />
+			</p:column>
+			
+			<p:column headerText="Posição X">
+				<h:outputText value="#{costureira.positionX}" />
+			</p:column>
+			
+			<p:column headerText="Posição Y">
+				<h:outputText value="#{costureira.positionY}" />
+			</p:column>
+			
+			<p:column headerText="Opções" id="opcoes">
+				
+				<p:commandButton id="buttonPencil" icon="ui-icon-pencil"
+					actionListener="#{costureirasController.loadCostureiraToEdit(costureira)}"
+					update="formEditCostureira:modalEditCostureira"
+					oncomplete="PF('editCostureira').show()">
+				</p:commandButton>
+				
+				<p:commandButton id="buttonExcluir" icon="ui-icon-trash"
+					actionListener="#{costureirasController.loadCostureiraToDelete(costureira)}" 
+					oncomplete="PF('modalExluirCostureira').show()"
+					update="formCostureiras:tabCostureiras"/>
+			</p:column>
+	
+		</p:dataTable>
+	</h:form>
 
 	<ui:include src="addCostureiraDialog.xhtml" />
+	<ui:include src="editCostureiraDialog.xhtml" />
+	<ui:include src="confirmExcluirDialog.xhtml" />
 	
 </ui:composition>
