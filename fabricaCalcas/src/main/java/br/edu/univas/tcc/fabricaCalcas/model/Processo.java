@@ -42,7 +42,7 @@ public class Processo implements java.io.Serializable, Comparator<Processo> {
 	
 	public String pegarDataFormatada(){
 		if(dataEntrega != null){
-			SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			return sd.format(dataEntrega);
 		}
 		return null;
@@ -87,7 +87,7 @@ public class Processo implements java.io.Serializable, Comparator<Processo> {
 		this.cliente = cliente;
 	}
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="data_entrega")
 	public Date getDataEntrega() {
 		return dataEntrega;

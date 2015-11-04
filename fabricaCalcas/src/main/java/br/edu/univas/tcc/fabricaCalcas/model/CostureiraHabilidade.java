@@ -27,6 +27,7 @@ public class CostureiraHabilidade implements java.io.Serializable {
 	private Integer idCostureiraHabilidade;
 	private Habilidade habilidade;
 	private Costureira costureira;
+	private float precoPorPeca;
 	private int tempoPorPeca;
 
 	@Id
@@ -58,6 +59,15 @@ public class CostureiraHabilidade implements java.io.Serializable {
 
 	public void setCostureira(Costureira costureira) {
 		this.costureira = costureira;
+	}
+	
+	@Column(name="preco_por_peca", nullable = false)
+	public float getPrecoPorPeca() {
+		return precoPorPeca;
+	}
+
+	public void setPrecoPorPeca(float precoPorPeca) {
+		this.precoPorPeca = precoPorPeca;
 	}
 
 	@Column(name="tempo_por_peca", nullable = false)

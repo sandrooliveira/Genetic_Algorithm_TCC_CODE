@@ -8,6 +8,7 @@ public abstract class Individual implements Comparable<Individual>{
 
 	protected ArrayList<Chromosome> chromosomes;
 	private float value = 0;
+	private float custo = 0;
 	private Node rootNode;
 	
 	
@@ -43,7 +44,18 @@ public abstract class Individual implements Comparable<Individual>{
 		this.value = value;
 	}
 	
+	public float getCusto() {
+		return custo;
+	}
+
+	public void setCusto(float custo) {
+		this.custo = custo;
+	}
 	
+	public float sumOfValues(){
+		return this.value + this.custo;
+	}
+
 	public Node getRootNode() {
 		return rootNode;
 	}
@@ -55,4 +67,6 @@ public abstract class Individual implements Comparable<Individual>{
 	public abstract Node getNode();
 
 	public abstract int compareTo(Individual o);
+	
+	public abstract void setTipoDeClassificacao(int tipoDeClassificacao);
 }

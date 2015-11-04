@@ -1,5 +1,7 @@
 package br.edu.univas.tcc.fabricaCalcas.ga_code;
 
+import java.math.BigDecimal;
+
 import javax.persistence.EntityManager;
 
 import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;
@@ -9,13 +11,15 @@ import br.edu.univas.tcc.ga_core.GAModel.CrossType;
 
 public class GeneticAlgorithmManagement {
 
-	public ProcessoIndividual iniciarDistribuicao(int numeroLote, int pecasPorLote, int idProcesso) {
+	public ProcessoIndividual iniciarDistribuicao(int numeroLote, BigDecimal prazEmSegundos, 
+			int pecasPorLote, int idProcesso) {
 		
 		EntityManager manager = ConFactory.getConn(); 
 		
 		ProcessoModel model = new ProcessoModel(manager,idProcesso);
 		model.setNumeroLote(numeroLote);
 		model.setPecasPorLote(pecasPorLote);
+		model.setPrazoEmSegundos(prazEmSegundos);
 		model.setGenerationQuantity(10000);
 		model.setPopulationSize(80);
 		model.setElitism(true);

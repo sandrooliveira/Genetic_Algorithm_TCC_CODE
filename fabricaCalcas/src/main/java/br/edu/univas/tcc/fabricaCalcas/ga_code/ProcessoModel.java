@@ -1,5 +1,6 @@
 package br.edu.univas.tcc.fabricaCalcas.ga_code;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ProcessoModel extends GAModel {
 	private int numeroLote;
 	private int pecasPorLote;
 	private int processo;
+	private BigDecimal prazoEmSegundos;
 	
 	private CostureirasDAO cdao;
 	private AtividadeDAO atividadeDao;
@@ -38,19 +40,19 @@ public class ProcessoModel extends GAModel {
 	@Override
 	public void createInitialPopulation() {
 		for (int i = 0; i < getPopulationSize(); i++) {
-			population.add(new ProcessoIndividual(atividadeFinal,atividadesCostureiras,this.numeroLote,
-												  this.pecasPorLote));
+			population.add(new ProcessoIndividual(atividadeFinal, prazoEmSegundos, atividadesCostureiras,
+													this.numeroLote, this.pecasPorLote));
 		}
 	}
 
 	@Override
 	public Individual createIndividual(ArrayList<Chromosome> chromosomes) {
-		return new ProcessoIndividual(atividadeFinal, chromosomes,this.numeroLote,this.pecasPorLote);
+		return new ProcessoIndividual(atividadeFinal, prazoEmSegundos, chromosomes,this.numeroLote,this.pecasPorLote);
 	}
 
 	@Override
 	public Individual createIndividual() {
-		return new ProcessoIndividual(atividadeFinal, atividadesCostureiras,this.numeroLote,this.pecasPorLote);
+		return new ProcessoIndividual(atividadeFinal, prazoEmSegundos, atividadesCostureiras,this.numeroLote,this.pecasPorLote);
 	}
 
 	public void getInformacoesCostureiras() {
@@ -105,4 +107,12 @@ public class ProcessoModel extends GAModel {
 		this.processo = processo;
 	}
 
+	public BigDecimal getPrazoEmSegundos() {
+		return prazoEmSegundos;
+	}
+
+	public void setPrazoEmSegundos(BigDecimal prazoEmSegundos) {
+		this.prazoEmSegundos = prazoEmSegundos;
+	}
+	
 }

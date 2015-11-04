@@ -48,6 +48,12 @@ form{
 	font-family: Arial;
 }
 
+.labelPrazoNaoAtendido{
+	font-size: 15px;
+	font-family: Arial;
+	color:red;
+}
+
 .ui-panelgrid td, .ui-panelgrid tr{
     border-style: none !important
 }

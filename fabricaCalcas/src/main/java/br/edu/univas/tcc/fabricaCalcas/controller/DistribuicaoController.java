@@ -1,7 +1,10 @@
 package br.edu.univas.tcc.fabricaCalcas.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +14,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -34,15 +39,19 @@ public class DistribuicaoController {
 	
 	private ProcessoDAO processDao;
 	
-	private int totalPecas;
-	private int totalPecasPorLote;
+	private String totalPecas;
+	private String totalPecasPorLote;
+	private Processo processo;
+	private Date dataInicio;
 	private int numeroDeLotes;
 	private int idProcesso;
 	private TreeNode rootFluxograma;	
 	private TreeNode rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-","-","-"));
 	private List<Node> allNodes = new ArrayList<Node>();
 	private boolean mostrarResult = false;
-	private float tempoTotal;
+	private ProcessoIndividual pi;
+	private BigDecimal prazEmSegundos;
+	private boolean prazoAtendido;
 	
 	@PostConstruct
 	public void init(){
@@ -60,35 +69,58 @@ public class DistribuicaoController {
 	}
 	
 	public void iniciarDistribuicao(){
-		if(totalPecas == 0 || totalPecasPorLote == 0){
+		int totalPecasInt = Integer.parseInt(totalPecas);
+		int totalPecasPorLoteInt = Integer.parseInt(totalPecasPorLote);
+		
+		if(totalPecasInt == 0 || totalPecasPorLoteInt == 0){
 			sendMessageToView("Total de peças ou total de peças por lote é invalido!", FacesMessage.SEVERITY_ERROR);
 			return;
 		}
 		
-		numeroDeLotes = totalPecas / totalPecasPorLote;
-		if((numeroDeLotes * totalPecasPorLote) != totalPecas){
-			sendMessageToView("Número de lote não exato: "+numeroDeLotes+" * "+totalPecasPorLote+" = "+numeroDeLotes*totalPecasPorLote, 
+		numeroDeLotes = totalPecasInt / totalPecasPorLoteInt;
+		if((numeroDeLotes * totalPecasPorLoteInt) != totalPecasInt){
+			sendMessageToView("Número de lote não exato: "+numeroDeLotes+" * "+totalPecasPorLote+" = "+numeroDeLotes*totalPecasPorLoteInt, 
 							   FacesMessage.SEVERITY_ERROR);
 			return;
 		}
 		
-		if(idProcesso <= 0){
+		if(idProcesso <= 0 || processo == null){
 			sendMessageToView("Processo inválido", FacesMessage.SEVERITY_ERROR);
 			return;
 		}
 		
+		prazEmSegundos = calcularPrazo();
+		prazoAtendido = false;
+		
 		GeneticAlgorithmManagement gam = new GeneticAlgorithmManagement();
-		ProcessoIndividual pi = gam.iniciarDistribuicao(numeroDeLotes, totalPecasPorLote, idProcesso);
+		pi = gam.iniciarDistribuicao(numeroDeLotes, prazEmSegundos, totalPecasPorLoteInt, idProcesso);
+		
+		//This is just to manage information messages in the view
+		if(pi.getValue() <= prazEmSegundos.longValue()){
+			prazoAtendido = true;
+		}
 		
 		if(pi != null){
 			rootFluxograma = construirArvore(pi.getNode(), null);
 			allNodes = new ArrayList<Node>();
 			rootTable  = new DefaultTreeNode(new TabDetailBean("-", "-", "-","-","-","-","-"));
 			construirTableDetail(pi);
-			tempoTotal = pi.getValue();
 			mostrarResult = true;
 		}
 		
+	}
+	
+	public BigDecimal calcularPrazo(){
+		DateTime dataInical = new DateTime(dataInicio);
+		DateTime dataFinal  = new DateTime(processo.getDataEntrega());
+		return  new BigDecimal(Seconds.secondsBetween(dataInical, dataFinal).getSeconds());
+	}
+	
+	public Date getDataEntrega(){
+		if(processo != null){
+			return processo.getDataEntrega();
+		}
+		return null;
 	}
 	
 	@SuppressWarnings("unused")
@@ -149,6 +181,7 @@ public class DistribuicaoController {
 		try {
 			if (idProcesso != null) {
 				this.idProcesso = Integer.parseInt(String.valueOf(idProcesso));
+				this.processo = processDao.getProcessoByID(this.idProcesso);
 			} else {
 				this.idProcesso = 0;
 			}
@@ -156,6 +189,14 @@ public class DistribuicaoController {
 		} catch (NumberFormatException e) {
 			this.idProcesso = 0;
 		}
+	}
+	
+	public String pegarDataFormatada(){
+		if(dataInicio != null){
+			SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			return sd.format(dataInicio);
+		}
+		return null;
 	}
 	
 	/*Getters and setters*/
@@ -166,21 +207,37 @@ public class DistribuicaoController {
 	public void setProcessos(List<Processo> processos) {
 		this.processos = processos;
 	}
+	
+	public Processo getProcesso() {
+		return processo;
+	}
 
-	public int getTotalPecas() {
+	public void setProcesso(Processo processo) {
+		this.processo = processo;
+	}
+
+	public String getTotalPecas() {
 		return totalPecas;
 	}
 
-	public void setTotalPecas(int totalPecas) {
+	public void setTotalPecas(String totalPecas) {
 		this.totalPecas = totalPecas;
 	}
 
-	public int getTotalPecasPorLote() {
+	public String getTotalPecasPorLote() {
 		return totalPecasPorLote;
 	}
 
-	public void setTotalPecasPorLote(int totalPecasPorLote) {
+	public void setTotalPecasPorLote(String totalPecasPorLote) {
 		this.totalPecasPorLote = totalPecasPorLote;
+	}
+	
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
 	}
 
 	public int getNumeroDeLotes() {
@@ -215,12 +272,28 @@ public class DistribuicaoController {
 		this.mostrarResult = mostrarResult;
 	}
 
-	public float getTempoTotal() {
-		return tempoTotal;
+	public ProcessoIndividual getPi() {
+		return pi;
 	}
 
-	public void setTempoTotal(float tempoTotal) {
-		this.tempoTotal = tempoTotal;
+	public void setPi(ProcessoIndividual pi) {
+		this.pi = pi;
+	}
+
+	public BigDecimal getPrazEmSegundos() {
+		return prazEmSegundos;
+	}
+
+	public void setPrazEmSegundos(BigDecimal prazEmSegundos) {
+		this.prazEmSegundos = prazEmSegundos;
+	}
+
+	public boolean isPrazoAtendido() {
+		return prazoAtendido;
+	}
+
+	public void setPrazoAtendido(boolean prazoAtendido) {
+		this.prazoAtendido = prazoAtendido;
 	}
 	
 }

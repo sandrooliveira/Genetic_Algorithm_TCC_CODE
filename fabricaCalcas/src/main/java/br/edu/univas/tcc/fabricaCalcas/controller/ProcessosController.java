@@ -2,6 +2,7 @@ package br.edu.univas.tcc.fabricaCalcas.controller;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -93,6 +94,10 @@ public class ProcessosController {
 						 "Insira as habilidades Finalização e Carimbo no banco!", null));
 			}
 		}
+	}
+	
+	public Date getCurrentDate(){
+		return new Date();
 	}
 	
 	//TODO:Remover este workaround

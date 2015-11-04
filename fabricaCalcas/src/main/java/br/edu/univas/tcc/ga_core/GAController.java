@@ -2,8 +2,11 @@ package br.edu.univas.tcc.ga_core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import br.edu.univas.tcc.fabricaCalcas.Costants.Constants;
 import br.edu.univas.tcc.fabricaCalcas.ga_code.ProcessoChromosome;
+import br.edu.univas.tcc.fabricaCalcas.ga_code.ProcessoIndividual;
 
 public class GAController {
 
@@ -25,6 +28,7 @@ public class GAController {
 			if(lastBest == null || lastBest != population.get(0)){
 				lastBest = population.get(0);
 				System.out.println(String.format("%6d",(i+1)) + " - " + population.get(0).getValue());
+				System.out.println(String.format("%6d",(i+1)) + " - " + population.get(0).getCusto());
 				population.get(0).getNode().printNodes();
 			}
 			
@@ -296,11 +300,43 @@ public class GAController {
 		}
 	}*/
 	
-	public void classify(ArrayList<Individual> population){
+	public void classify(List<Individual> population){
+		List<Individual> populationAux = new ArrayList<Individual>();
+		List<Individual> populationGood = new ArrayList<Individual>();
+		
 		for(Individual individual : population){
 			individual.calculateValue();
 		}
 		Collections.sort(population);
+		
+		
+		for(Individual individual : population){
+			
+			ProcessoIndividual pi = (ProcessoIndividual) individual;
+			if(individual.getValue() <= pi.getPrazo().longValue()){
+				individual.setTipoDeClassificacao(Constants.CLASSIFICACAO_POR_CUSTO);
+				populationGood.add(individual);
+			}
+		}
+		Collections.sort(populationGood);
+		
+		for(Individual individual : populationGood){
+			individual.setTipoDeClassificacao(Constants.CLASSIFICACAO_POR_TEMPO);
+		}
+		
+		//Remove todos os objetos com tempo < prazo da população
+		population.removeAll(populationGood);
+		
+		//Adiciona-os na poplação auxiliar
+		populationAux.addAll(populationGood);
+		
+		//adiciona os demais indivíduos da população
+		populationAux.addAll(population);
+		
+		//Redefine a população
+		population.clear();
+		population.addAll(populationAux);
+		
 		
 		/*for(Chromosome chromosome : population.get(0).getChromosomes()){
 			ProcessoChromosome processoChromosome = (ProcessoChromosome) chromosome;

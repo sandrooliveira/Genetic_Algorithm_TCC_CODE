@@ -26,7 +26,8 @@
 				<h:outputLabel for="entrega" value="Entrega:" />
 				<p:calendar id="entrega" required="true" mask="true" effect="fold"
 					value="#{processosController.processo.dataEntrega}"
-					requiredMessage="Por favor informe uma data de entrega" />
+					requiredMessage="Por favor informe uma data de entrega" 
+					pattern="dd/MM/yyyy HH:mm:ss" mindate="#{processosController.getCurrentDate()}"/>
 			</h:panelGrid>
 
 			<p:separator />

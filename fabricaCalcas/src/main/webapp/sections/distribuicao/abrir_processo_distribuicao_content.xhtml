@@ -12,17 +12,23 @@
 		
 			<div id="distribuicaoFields">
 				<p:fieldset legend="Forma de distribuição">
-					<h:panelGrid columns="5">
-						<h:outputLabel styleClass="label" for="nPecas" value="Número de peças:" />
+					<p:panelGrid columns="4">
 						<p:inputText id="nPecas" required="true"
 							value="#{distribuicaoController.totalPecas}"
-							requiredMessage="Por favor informe o total de peças" maxlength="19" />
+							requiredMessage="Por favor informe o total de peças" 
+							maxlength="19" placeholder="Número de peças" />
 		
-						<h:outputLabel styleClass="label" for="totalPecaPorLote" value="Total de peça por lote:" />
 						<p:inputText id="totalPecaPorLote" required="true"
 							value="#{distribuicaoController.totalPecasPorLote}"
 							requiredMessage="Por favor informe o total de peças por lote"
-							maxlength="19" />
+							maxlength="19" placeholder="Total de peças por lote"/>
+						
+						<p:calendar id="inicio" required="true" mask="true" effect="fold"
+							value="#{distribuicaoController.dataInicio}"
+							requiredMessage="Por favor informe uma data de início" 
+							pattern="dd/MM/yyyy HH:mm:ss" mindate="#{processosController.getCurrentDate()}"
+							maxdate="#{distribuicaoController.getDataEntrega()}"
+							placeholder="Data de inicio"/>
 		
 						<p:commandButton action="#{distribuicaoController.iniciarDistribuicao()}"
 										 value="Iniciar distribuição" 
@@ -31,7 +37,7 @@
 										 onstart="PF('waitDialog').show();"
 										 onsuccess="PF('waitDialog').hide();"/>
 						
-					</h:panelGrid>
+					</p:panelGrid>
 				</p:fieldset>
 			</div>
 			
@@ -42,9 +48,36 @@
 			<p:fieldset legend="Resultado da distribuição" rendered="#{distribuicaoController.mostrarResult}">
 					<h3>
 						<h:outputLabel
-							value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes} - Melhor tempo encontrado:
-						      #{distribuicaoController.tempoTotal} segundos"
-							styleClass="label" />
+							value="Total de lotes definidos: #{distribuicaoController.numeroDeLotes}"  
+								styleClass="label" />
+						
+						<br />
+						
+						<h:outputLabel 
+							value="Tempo total: #{distribuicaoController.pi.value} segundos - Custo: R$ #{distribuicaoController.pi.custo}" 
+							styleClass="label"/>
+								
+						<br />
+						
+						<h:outputLabel rendered="#{distribuicaoController.prazoAtendido}"
+							value="O menor tempo encontrado está associado ao menor custo dentro do prazo"
+								styleClass="label"/>
+								
+						<h:outputLabel rendered="#{!distribuicaoController.prazoAtendido}"
+							value="O tempo de produção mais otimizado não atende o prazo, o custo não foi considerado!"
+								styleClass="labelPrazoNaoAtendido"/>
+						
+						<br />
+						<br />
+						
+					<h:outputLabel 
+							value="Início: #{distribuicaoController.pegarDataFormatada()} - Entrega: #{distribuicaoController.processo.pegarDataFormatada()}" 
+							styleClass="label"/>
+						
+						<br />
+						
+					<h:outputLabel value="Prazo total: #{distribuicaoController.prazEmSegundos}"
+											   styleClass="label" />
 					</h3>
 			
 					<p:tree value="#{distribuicaoController.rootFluxograma}" var="node"
