@@ -61,6 +61,19 @@ public class CostureirasDAO {
 		}
 	}
 	
+	public void updateCostureiraHabilidade(CostureiraHabilidade ch){
+		try {
+			entityManager.getTransaction().begin();
+			entityManager.merge(ch);
+			entityManager.flush();
+			entityManager.getTransaction().commit();
+		} catch (Exception e) {
+			entityManager.getTransaction().rollback();
+			e.printStackTrace();
+			System.out.println("Problema ao atualizar costureira habilidade");
+		}
+	}
+	
 	public void removeCostureira(Costureira costureira) throws Exception {
 		try {
 			entityManager.getTransaction().begin();

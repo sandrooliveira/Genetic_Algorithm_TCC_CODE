@@ -32,7 +32,7 @@ public class GAController {
 				population.get(0).getNode().printNodes();
 			}
 			
-			//verifica o final da execuÃ§Ã£o
+			//verifica o final da execução
 			if(i == model.getGenerationQuantity()){
 				break;
 			}
@@ -50,7 +50,7 @@ public class GAController {
 			}
 			
 			while(newGeneration.size() < model.getPopulationSize()){
-				//seleÃ§Ã£o
+				//seleção
 				Individual individual1 = doSelection();
 				Individual individual2;
 				
@@ -61,9 +61,9 @@ public class GAController {
 				//cruzamento
 				IndividualPair pair = doCrossing(individual1, individual2);
 				
-				//mutaÃ§Ã£o
-				//doMutation(pair.getIndividual1());
-				//doMutation(pair.getIndividual2());
+				//mutação
+				doMutation(pair.getIndividual1());
+				doMutation(pair.getIndividual2());
 				
 				newGeneration.add(pair.getIndividual1());
 				newGeneration.add(pair.getIndividual2());
@@ -91,24 +91,55 @@ public class GAController {
 		
 		int position = (int) (Math.random() * chromosomes.size());
 		
-		chromosomes.get(position).doMutation();;
+		chromosomes.get(position).doMutation();
 	}
 
 	public void doMutationPermutation(Individual individual) {
-		ArrayList<Chromosome> chromosomes = individual.getChromosomes();
 		
-		int firstPosition = (int) (Math.random() * chromosomes.size());
-		int secondPosition = 0;
+		Integer lastAtividade = null;
+		ArrayList<ProcessoChromosome> chromossomesToMutate = new ArrayList<ProcessoChromosome>(); 
 		
+		for(Chromosome chromosome : individual.getChromosomes()){
+			ProcessoChromosome processoChromosome = (ProcessoChromosome) chromosome;
+			
+			if(lastAtividade == null || !lastAtividade.equals(processoChromosome.getAtividade())){
+				if(!chromossomesToMutate.isEmpty() && chromossomesToMutate.size() > 1){
+					doMutationOnChromossome(chromossomesToMutate);
+				}
+				chromossomesToMutate.clear();
+				lastAtividade = processoChromosome.getAtividade();
+			}
+			chromossomesToMutate.add(processoChromosome);
+		}
+		//For the last one
+		doMutationOnChromossome(chromossomesToMutate);
+	}
+	
+	private void doMutationOnChromossome(ArrayList<ProcessoChromosome> chromossomesToMutate){
+		int position1;
+		int position2;
+		int varAux;
+		int varAux2;
+		
+		ProcessoChromosome chromosome1 = null;
+		ProcessoChromosome chromosome2 = null;
+		
+		position1 = (int) (Math.random() * (chromossomesToMutate.size()));
 		do{
-			secondPosition = (int)(Math.random() * chromosomes.size());
-		}while(firstPosition != secondPosition);
+			 position2 = (int) (Math.random() * (chromossomesToMutate.size()));
+		}while(position1 == position2);
 		
-		Chromosome firstChromosome  = chromosomes.get(firstPosition);
-		Chromosome secondChromosome =  chromosomes.get(secondPosition);
+		chromosome1 = chromossomesToMutate.get(position1);
+		chromosome2 = chromossomesToMutate.get(position2);
 		
-		chromosomes.set(firstPosition, secondChromosome);
-		chromosomes.set(secondPosition, firstChromosome);
+		varAux  = chromosome2.getQuantidade_lotes();
+		varAux2 = chromosome2.getLotesToShow();
+		
+		chromosome2.setQuantidade_lotes(chromosome1.getQuantidade_lotes());
+		chromosome2.setLotesToShow(chromosome1.getLotesToShow());
+
+		chromosome1.setQuantidade_lotes(varAux);
+		chromosome1.setLotesToShow(varAux2);
 	}
 
 	private Individual doSelection() {

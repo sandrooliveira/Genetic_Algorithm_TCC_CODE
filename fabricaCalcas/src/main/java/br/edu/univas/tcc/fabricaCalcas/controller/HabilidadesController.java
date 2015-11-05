@@ -9,6 +9,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.event.RowEditEvent;
+
 import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;
 import br.edu.univas.tcc.fabricaCalcas.dao.CostureirasDAO;
 import br.edu.univas.tcc.fabricaCalcas.dao.HabilidadeDAO;
@@ -94,6 +96,13 @@ public class HabilidadesController {
 	
 	public void setarCostureiraASerRemovida(CostureiraHabilidade costureiraHab){
 		this.cosHabToBeRemoved = costureiraHab;
+	}
+	
+	public void onRowEdit(RowEditEvent event){
+		CostureiraHabilidade ch = (CostureiraHabilidade) event.getObject();
+		costDao.updateCostureiraHabilidade(ch);
+		sendMessageToView("Informações atualizadas com sucesso!",
+				   FacesMessage.SEVERITY_INFO);
 	}
 	
 	public void cancelarDeleting(){

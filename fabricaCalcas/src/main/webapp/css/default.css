@@ -58,3 +58,6 @@ form{
     border-style: none !important
 }
 
+.inputPrecoPecaClass input{
+	width:80px!important;
+}
