@@ -112,7 +112,9 @@ public class GAController {
 			chromossomesToMutate.add(processoChromosome);
 		}
 		//For the last one
-		doMutationOnChromossome(chromossomesToMutate);
+		if(!chromossomesToMutate.isEmpty() && chromossomesToMutate.size() > 1){
+			doMutationOnChromossome(chromossomesToMutate);
+		}
 	}
 	
 	private void doMutationOnChromossome(ArrayList<ProcessoChromosome> chromossomesToMutate){

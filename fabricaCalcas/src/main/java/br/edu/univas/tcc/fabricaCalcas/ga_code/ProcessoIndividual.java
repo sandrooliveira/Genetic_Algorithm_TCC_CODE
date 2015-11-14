@@ -46,12 +46,13 @@ public class ProcessoIndividual extends Individual {
 			distribuiuPorTodasCostureiras = false;
 
 			while (true){
+				/*Verificou-se que quando a qtdeLote era 1 o valor sorteado nunca era
+				 *0 usando o Math.random com CAST para INT */
 				if(qtdeLote == 1){
 					loteCostureira  = Math.round((float) Math.random() * 1);
 				}else{
 					loteCostureira = (int) (Math.random() * qtdeLote);
 				}
-				
 				
 				CostureiraHabilidade costureiraHabilidade = atividadesCostureiras.get(key).get(cont);
 				
@@ -97,6 +98,14 @@ public class ProcessoIndividual extends Individual {
 		float custoTotal = 0;
 		int totalPecasAProduzir = 0;
 		List<Chromosome> cromossomos = null;
+		
+		/*Calcular o custo total*/
+		for(Chromosome chromosomeCusto : chromosomes){
+			totalPecasAProduzir = 0;
+			ProcessoChromosome processoChromossome = (ProcessoChromosome) chromosomeCusto;
+			totalPecasAProduzir = processoChromossome.getLotesToShow() * this.pecasPorLote;
+			custoTotal += totalPecasAProduzir * processoChromossome.getCostureiraHabilidade().getPrecoPorPeca();
+		}
 
 		for (Chromosome chromosome : chromosomes) {
 			ProcessoChromosome processoChromossome = (ProcessoChromosome) chromosome;
@@ -110,14 +119,6 @@ public class ProcessoIndividual extends Individual {
 			cromossomos.add(processoChromossome);
 		}
 		node = new Node(atividadeFinal, atividadeCromossomos,this.pecasPorLote);
-		
-		/*Calcular o custo total*/
-		for(Chromosome chromosomeCusto : chromosomes){
-			totalPecasAProduzir = 0;
-			ProcessoChromosome processoChromossome = (ProcessoChromosome) chromosomeCusto;
-			totalPecasAProduzir = processoChromossome.getLotesToShow() * this.pecasPorLote;
-			custoTotal += totalPecasAProduzir * processoChromossome.getCostureiraHabilidade().getPrecoPorPeca();
-		}
 		
 		setCusto(custoTotal);
 
