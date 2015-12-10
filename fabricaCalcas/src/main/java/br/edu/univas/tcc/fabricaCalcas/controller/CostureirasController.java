@@ -9,7 +9,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.context.RequestContext;
 
 import br.edu.univas.tcc.fabricaCalcas.dao.ConFactory;

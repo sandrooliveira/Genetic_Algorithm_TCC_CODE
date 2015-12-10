@@ -24,16 +24,17 @@ DROP TABLE IF EXISTS `atividade`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `atividade` (
   `id_atividade` int(11) NOT NULL AUTO_INCREMENT,
-  `id_processo` int(11) NOT NULL,
-  `id_hablidade` int(11) NOT NULL,
+  `is_atividade_final` bit(1) NOT NULL,
   `nome_atividade` varchar(255) NOT NULL,
-  `is_atividade_final` int(1) NOT NULL DEFAULT '0',
+  `id_hablidade` int(11) NOT NULL,
+  `id_processo` int(11) NOT NULL,
   PRIMARY KEY (`id_atividade`),
-  KEY `fk_processos_habilidades_processos1_idx` (`id_processo`),
-  KEY `fk_processos_habilidades_partes_calca1_idx` (`id_hablidade`),
-  CONSTRAINT `fk_processos_habilidades_partes_calca1` FOREIGN KEY (`id_hablidade`) REFERENCES `habilidade` (`id_habilidade`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_processos_habilidades_processos1` FOREIGN KEY (`id_processo`) REFERENCES `processo` (`id_processo`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=297 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_atividade` (`id_atividade`),
+  KEY `FKC1B71D07F220ED65` (`id_hablidade`),
+  KEY `FKC1B71D073E14782E` (`id_processo`),
+  CONSTRAINT `FKC1B71D073E14782E` FOREIGN KEY (`id_processo`) REFERENCES `processo` (`id_processo`),
+  CONSTRAINT `FKC1B71D07F220ED65` FOREIGN KEY (`id_hablidade`) REFERENCES `habilidade` (`id_habilidade`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +43,7 @@ CREATE TABLE `atividade` (
 
 LOCK TABLES `atividade` WRITE;
 /*!40000 ALTER TABLE `atividade` DISABLE KEYS */;
-INSERT INTO `atividade` VALUES (56,80,1,'AT_Finalização',1),(170,80,5,'AT_Carimbo',0),(288,80,6,'AT_Frente',0),(294,80,4,'AT_Bolso',0),(295,80,7,'AT_Ziper',0),(296,80,8,'AT_Traz',0);
+INSERT INTO `atividade` VALUES (1,'','AT_Finalização',2,1),(2,'\0','AT_Carimbo',1,1);
 /*!40000 ALTER TABLE `atividade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,11 +59,12 @@ CREATE TABLE `atividade_ordem` (
   `id_atividade` int(11) NOT NULL,
   `id_predecessora` int(11) NOT NULL,
   PRIMARY KEY (`id_atividade_ordem`),
-  KEY `fk_atividades_ordens_atividade1_idx` (`id_atividade`),
-  KEY `fk_atividades_ordens_atividade2_idx` (`id_predecessora`),
-  CONSTRAINT `fk_atividades_ordens_atividade1` FOREIGN KEY (`id_atividade`) REFERENCES `atividade` (`id_atividade`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_atividades_ordens_atividade2` FOREIGN KEY (`id_predecessora`) REFERENCES `atividade` (`id_atividade`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=684 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_atividade_ordem` (`id_atividade_ordem`),
+  KEY `FK8BE6E6118388BB99` (`id_predecessora`),
+  KEY `FK8BE6E6118A6A2F60` (`id_atividade`),
+  CONSTRAINT `FK8BE6E6118388BB99` FOREIGN KEY (`id_predecessora`) REFERENCES `atividade` (`id_atividade`),
+  CONSTRAINT `FK8BE6E6118A6A2F60` FOREIGN KEY (`id_atividade`) REFERENCES `atividade` (`id_atividade`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +73,7 @@ CREATE TABLE `atividade_ordem` (
 
 LOCK TABLES `atividade_ordem` WRITE;
 /*!40000 ALTER TABLE `atividade_ordem` DISABLE KEYS */;
-INSERT INTO `atividade_ordem` VALUES (682,56,294),(683,294,170);
+INSERT INTO `atividade_ordem` VALUES (1,1,2);
 /*!40000 ALTER TABLE `atividade_ordem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,12 +86,13 @@ DROP TABLE IF EXISTS `costureira`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `costureira` (
   `id_costureira` int(11) NOT NULL AUTO_INCREMENT,
-  `nome_costureira` varchar(45) DEFAULT NULL,
   `disponibilidade` float DEFAULT NULL,
+  `nome_costureira` varchar(45) DEFAULT NULL,
   `positionX` int(11) DEFAULT NULL,
   `positionY` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_costureira`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id_costureira`),
+  UNIQUE KEY `id_costureira` (`id_costureira`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +101,7 @@ CREATE TABLE `costureira` (
 
 LOCK TABLES `costureira` WRITE;
 /*!40000 ALTER TABLE `costureira` DISABLE KEYS */;
-INSERT INTO `costureira` VALUES (1,'Joana',1,0,0),(2,'Cida',0.5,0,0),(3,'Marta',1,0,0),(4,'Roberta',1,5,6),(5,'Maria',1,0,0),(6,'Tereza',1,2,4),(7,'Geralda',1,0,0),(8,'Silvia',1,0,0),(9,'Bete',1,0,0),(10,'Dita',1,0,0),(11,'Fia',1,0,0),(12,'Lu',1,0,0),(13,'Valdene',1,0,0),(14,'Josi',1,3,4),(15,'Ana',1,0,0),(16,'Luana',1,0,0),(17,'Marcelo',1,8,2);
+INSERT INTO `costureira` VALUES (1,0,'Marcelo',2,5),(2,0,'Duda',2,4);
 /*!40000 ALTER TABLE `costureira` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,15 +114,17 @@ DROP TABLE IF EXISTS `costureira_habilidade`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `costureira_habilidade` (
   `id_costureira_habilidade` int(11) NOT NULL AUTO_INCREMENT,
-  `id_habilidade` int(11) NOT NULL,
-  `id_costureira` int(11) NOT NULL,
+  `preco_por_peca` float NOT NULL,
   `tempo_por_peca` int(11) NOT NULL,
+  `id_costureira` int(11) NOT NULL,
+  `id_habilidade` int(11) NOT NULL,
   PRIMARY KEY (`id_costureira_habilidade`),
-  KEY `fk_costureiras_habilidades_partes_calca_idx` (`id_habilidade`),
-  KEY `fk_costureiras_habilidades_costureiras1_idx` (`id_costureira`),
-  CONSTRAINT `fk_costureiras_habilidades_costureiras1` FOREIGN KEY (`id_costureira`) REFERENCES `costureira` (`id_costureira`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_costureiras_habilidades_partes_calca` FOREIGN KEY (`id_habilidade`) REFERENCES `habilidade` (`id_habilidade`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_costureira_habilidade` (`id_costureira_habilidade`),
+  KEY `FK2E457D3D19D19C64` (`id_habilidade`),
+  KEY `FK2E457D3D3DD66CE8` (`id_costureira`),
+  CONSTRAINT `FK2E457D3D19D19C64` FOREIGN KEY (`id_habilidade`) REFERENCES `habilidade` (`id_habilidade`),
+  CONSTRAINT `FK2E457D3D3DD66CE8` FOREIGN KEY (`id_costureira`) REFERENCES `costureira` (`id_costureira`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,7 +133,7 @@ CREATE TABLE `costureira_habilidade` (
 
 LOCK TABLES `costureira_habilidade` WRITE;
 /*!40000 ALTER TABLE `costureira_habilidade` DISABLE KEYS */;
-INSERT INTO `costureira_habilidade` VALUES (13,6,4,2),(16,6,6,2),(17,8,3,1),(18,8,1,2),(19,8,7,3),(20,8,8,4),(21,8,6,5),(22,8,5,6),(23,7,1,1),(24,7,12,2),(25,7,11,3),(26,7,13,4),(31,4,13,1),(32,4,3,2),(33,4,10,3),(34,1,14,1),(35,5,17,0);
+INSERT INTO `costureira_habilidade` VALUES (1,0,0,1,1),(2,12,2,2,2);
 /*!40000 ALTER TABLE `costureira_habilidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -142,8 +147,9 @@ DROP TABLE IF EXISTS `habilidade`;
 CREATE TABLE `habilidade` (
   `id_habilidade` int(11) NOT NULL AUTO_INCREMENT,
   `nome_habilidade` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id_habilidade`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id_habilidade`),
+  UNIQUE KEY `id_habilidade` (`id_habilidade`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +158,7 @@ CREATE TABLE `habilidade` (
 
 LOCK TABLES `habilidade` WRITE;
 /*!40000 ALTER TABLE `habilidade` DISABLE KEYS */;
-INSERT INTO `habilidade` VALUES (1,'Finalização'),(4,'Bolso'),(5,'Carimbo'),(6,'Frente'),(7,'Ziper'),(8,'Traz'),(9,'Bordado'),(10,'Chique');
+INSERT INTO `habilidade` VALUES (1,'Carimbo'),(2,'Finalização');
 /*!40000 ALTER TABLE `habilidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,11 +171,12 @@ DROP TABLE IF EXISTS `processo`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `processo` (
   `id_processo` int(11) NOT NULL AUTO_INCREMENT,
-  `nome_processo` varchar(45) NOT NULL,
-  `cliente` varchar(45) NOT NULL,
-  `data_entrega` date NOT NULL,
-  PRIMARY KEY (`id_processo`)
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8;
+  `cliente` varchar(45) DEFAULT NULL,
+  `data_entrega` datetime DEFAULT NULL,
+  `nome_processo` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id_processo`),
+  UNIQUE KEY `id_processo` (`id_processo`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +185,7 @@ CREATE TABLE `processo` (
 
 LOCK TABLES `processo` WRITE;
 /*!40000 ALTER TABLE `processo` DISABLE KEYS */;
-INSERT INTO `processo` VALUES (80,'Calça X','Sandro','2015-09-20');
+INSERT INTO `processo` VALUES (1,'te','2015-12-09 23:02:33','te');
 /*!40000 ALTER TABLE `processo` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -191,4 +198,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-01 22:21:44
+-- Dump completed on 2015-12-09 23:05:24
